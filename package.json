@@ -1,0 +1,35 @@
+{
+  "name": "netcat",
+  "version": "0.0.1",
+  "description": "Netcat client and server modules written in pure Javascript for Node.js",
+  "main": "index.js",
+  "scripts": {
+    "test": "standard && nsp check"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/roccomuso/netcat.git"
+  },
+  "keywords": [
+    "netcat",
+    "nc",
+    "swissknife",
+    "net",
+    "shell",
+    "js",
+    "node",
+    "tcp",
+    "udp",
+    "server"
+  ],
+  "author": "Rocco Musolino",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/roccomuso/netcat/issues"
+  },
+  "homepage": "https://github.com/roccomuso/netcat#readme",
+  "devDependencies": {
+    "nsp": "^2.6.3",
+    "standard": "^10.0.2"
+  }
+}
