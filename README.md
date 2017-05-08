@@ -1,7 +1,10 @@
-# netcat
+# netcat [![NPM Version](https://img.shields.io/npm/v/netcat.svg)](https://www.npmjs.com/package/netcat) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+
 Netcat client and server modules written in pure Javascript for Node.js.
 
 **Under active development... stay out**
+
+This module implements all the basic netcat's features. To use as standalone tool install the [nc](https://github.com/roccomuso/nc) package.
 
 ## What you can do
 
@@ -17,14 +20,24 @@ Netcat client and server modules written in pure Javascript for Node.js.
 
 - [ ] Crypto
 
+## Install
+
+    $ npm install --save netcat
+
+## API
+
+...
+
 ## CLI usage
 
-> This module implements all the basic netcat's features.
+For the standalone usage install the `nc` CLI package:
 
+    $ npm install -g nc
+
+Example:
 
     $ # Listen for inbound
-    $ netcat -l -p port [- options] [hostname] [port]
-
+    $ nc -l -p port [- options] [hostname] [port]
 
 
 Available options:
@@ -50,11 +63,19 @@ Available options:
 -t                   answer TELNET negotiation
 -u                   UDP mode
 -v                   verbose [use twice to be more verbose]
--wsecs               timeout for connects and final net reads
+-w secs              timeout for connects and final net reads (client-side)
 -z                   zero-I/O mode [used for scanning]
 ```
+
+## DEBUG
+
+Debug matches the verbose mode.
+You can enable it with the `verbose: true` param or the env var `DEBUG=netcat:*`
 
 ## Known limitations
 
 None
 
+## Author
+
+Rocco Musolino ([@roccomuso](https://twitter.com/roccomuso))
