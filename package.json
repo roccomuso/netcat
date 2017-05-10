@@ -33,7 +33,6 @@
     "standard": "^10.0.2"
   },
   "dependencies": {
-    "debug": "^2.6.6",
-    "telnet-client": "^0.13.4"
+    "debug": "^2.6.6"
   }
 }
