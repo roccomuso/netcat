@@ -24,6 +24,44 @@ This module implements all the basic netcat's features. To use as standalone too
 
     $ npm install --save netcat
 
+## Usage
+
+```javascript
+const NetcatServer = require('netcat/server')
+const NetcatClient = require('netcat/client')
+const nc = new NetcatServer()
+const nc2 = new NetcatClient()
+```
+
+Available Options:
+
+```
+{
+  protocol: 'tcp',
+  address: '0.0.0.0',
+  port: null,
+  stdout: process.stdout
+}
+```
+
+## Examples
+
+| JS API                 | CLI equivalent                     |
+|---------------------|------------------------------------|
+|`nc.port(2389).listen()` | `nc -l -p 2389` |
+
+#### Server and Client connection
+
+| Server                 | Client                     |
+|------------------------|------------------------------------|
+|`nc.port(2389).listen()`|`nc2.addr('127.0.0.1').port(2389).connect()`|
+
+#### Transfer file
+
+| Server         | Client                    |
+|---------------------|------------------------------------|
+|`nc.port(2389).listen().pipe(outputStream)`|`inputStream.pipe(nc2.port(2389).connect())`|
+
 ## API
 
 ...
