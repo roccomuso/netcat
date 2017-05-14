@@ -39,14 +39,13 @@ Available Options:
 {
   protocol: 'tcp',
   address: '0.0.0.0',
-  port: null,
-  stdout: process.stdout
+  port: null
 }
 ```
 
 ## Examples
 
-| JS API                 | CLI equivalent                     |
+| JS API              | CLI equivalent                     |
 |---------------------|------------------------------------|
 |`nc.port(2389).listen()` | `nc -l -p 2389` |
 
@@ -58,13 +57,44 @@ Available Options:
 
 #### Transfer file
 
-| Server         | Client                    |
+| Server              | Client                    |
 |---------------------|------------------------------------|
 |`nc.port(2389).listen().pipe(outputStream)`|`inputStream.pipe(nc2.port(2389).connect())`|
 
+or viceversa you can do the equivalent of `nc -l -p 2389 < filename` and when someone else connects to your port 2389, the file is sent to them whether they wanted it or not:
+
+| Server              | Client                    |
+|---------------------|------------------------------------|
+|`nc.port(2389).serve(inputStream).listen()`|`nc2.port(2389).connect().pipe(outputStream)`|
+
+#### Keepalive connection
+
+| Server              | Client                    |
+|---------------------|------------------------------------|
+|`nc.port(2389).k().listen()`|`inputStream.pipe(nc2.port(2389).connect())`|
+
+The server will be kept alive and not being closed after the first connection. (`k()` is an alias for `keepalive()`)
+
+#### Hex dump
+
+To obtain a hex dump file of the data sent either way, use "-o logfile".
+The dump lines begin with "<" or ">" to respectively indicate "from the net" or "to the net", and contain the total count per direction, and hex and ascii representations of the traffic. Capturing a hex dump naturally slows netcat
+down a bit, so don't use it where speed is critical.
+
+
+
+
 ## API
 
-...
+#### `port(<port>)`
+
+Netcat can bind to any local port, subject to privilege restrictions and ports that are already in use.
+
+#### `listen()`
+
+#### `keepalive()` or `k()`
+
+When you set the keepalive, the server will stay up and possibly the outStream given to `pipe(outStream)` kept open.
 
 ## CLI usage
 
@@ -109,6 +139,16 @@ Available options:
 
 Debug matches the verbose mode.
 You can enable it with the `verbose: true` param or the env var `DEBUG=netcat:*`
+
+## Tests
+
+Run them with: `npm test`
+
+Coverage:
+
+- [x] Test the `.serve(input)` method
+- [ ] Tests the keepalive connection with `.pipe()`.
+- [ ] Serve and file transfer with keepalive.
 
 ## Known limitations
 
