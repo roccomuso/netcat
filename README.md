@@ -130,7 +130,7 @@ Available options:
 -T tos               set Type Of Service
 -t                   answer TELNET negotiation
 -u                   UDP mode
--v                   verbose [use twice to be more verbose]
+-v                   verbose
 -w secs              timeout for connects and final net reads (client-side)
 -z                   zero-I/O mode [used for scanning]
 ```
@@ -148,7 +148,7 @@ Coverage:
 
 - [x] Test the `.serve(input)` method
 - [ ] Tests the keepalive connection with `.pipe()`.
-- [ ] Serve and file transfer with keepalive.
+- [ ] Serve and file transfer with keepalive (HACK: reuse a Readable stream?).
 
 ## Known limitations
 
