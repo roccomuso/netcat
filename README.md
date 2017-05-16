@@ -61,11 +61,11 @@ Available Options:
 |---------------------|------------------------------------|
 |`nc.port(2389).listen().pipe(outputStream)`|`inputStream.pipe(nc2.port(2389).connect())`|
 
-or viceversa you can do the equivalent of `nc -l -p 2389 < filename` and when someone else connects to your port 2389, the file is sent to them whether they wanted it or not:
+or viceversa you can do the equivalent of `nc -l -p 2389 < filename.txt` and when someone else connects to your port 2389, the file is sent to them whether they wanted it or not:
 
 | Server              | Client                    |
 |---------------------|------------------------------------|
-|`nc.port(2389).serve(inputStream).listen()`|`nc2.port(2389).connect().pipe(outputStream)`|
+|`nc.port(2389).serve('filename.txt').listen()`|`nc2.port(2389).connect().pipe(outputStream)`|
 
 #### Keepalive connection
 
@@ -147,8 +147,8 @@ Run them with: `npm test`
 Coverage:
 
 - [x] Test the `.serve(input)` method
-- [ ] Tests the keepalive connection with `.pipe()`.
-- [ ] Serve and file transfer with keepalive (HACK: reuse a Readable stream?).
+- [x] Tests the keepalive connection with `.pipe()` and `serve()`.
+- [ ] UDP.
 
 ## Known limitations
 
