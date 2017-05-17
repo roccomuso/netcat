@@ -11,8 +11,6 @@ const NetcatClient = Netcat.client
 Tests:
 .listen()
 double .listen() (EADDR in use expected)
-.tcp()
-.close()
 */
 
 test('Client and Server constructor', function (t) {
@@ -30,7 +28,7 @@ test('Client and Server constructor', function (t) {
 })
 
 test('Server basic methods', function(t){
-  t.plan(13)
+  t.plan(14)
   try {
     var nc = new NetcatServer()
     /* checking default values */
@@ -38,6 +36,7 @@ test('Server basic methods', function(t){
     t.equal(nc._protocol, 'tcp', 'protocol is tcp by default')
     t.equal(nc._address, '0.0.0.0', '0.0.0.0 default address')
     t.equal(nc._keepalive, false, 'no keepalive')
+    t.equal(Object.keys(nc._clients).length, 0, 'no clients')
     /* set methods */
     nc.udp()
     t.equal(nc._protocol, 'udp', 'setting udp as protocol')
@@ -61,6 +60,31 @@ test('Server basic methods', function(t){
 
   } catch (e) {
     t.fail(e)
+  }
+
+})
+
+
+test('TCP Server listen', function(t){
+  t.plan(1)
+
+  var nc = new NetcatServer()
+  var nc2 = new NetcatClient()
+
+  nc.port(2389).listen().on('data', function(socket, data){
+    t.ok(socket.id, 'Socket got an ID assigned')
+    t.equal(data.toString(), 'Hello World', 'Got expected string')
+    close()
+  })
+
+  nc2.addr('127.0.0.1').port(2389).connect(function(){
+    this.write('Hello World')
+  })
+
+  function close(){
+    nc.close(function(){
+      t.ok(true, 'close server')
+    })
   }
 
 })
