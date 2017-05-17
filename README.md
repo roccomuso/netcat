@@ -1,4 +1,4 @@
-# netcat [![NPM Version](https://img.shields.io/npm/v/netcat.svg)](https://www.npmjs.com/package/netcat) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+# netcat [![NPM Version](https://img.shields.io/npm/v/netcat.svg)](https://www.npmjs.com/package/netcat) [![Build Status](https://travis-ci.org/roccomuso/netcat.svg?branch=master)](https://travis-ci.org/roccomuso/netcat) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
 Netcat client and server modules written in pure Javascript for Node.js.
 
@@ -96,6 +96,25 @@ Netcat can bind to any local port, subject to privilege restrictions and ports t
 
 When you set the keepalive, the server will stay up and possibly the outStream given to `pipe(outStream)` kept open.
 
+#### `serve()`
+
+The `serve` method accepts either a string (indicating a file name) or a Readable stream.
+When you pass a readable stream the keepalive method could cause the stream to be consumed at the first request and no more can be served (The stream is not cached in a buffer).
+
+## Events
+
+The netcat server extends the `EventEmitter` class. You'll be able to catch some events straight from the sockets. For example the `data` event:
+
+| Server              | Client                    |
+|---------------------|------------------------------------|
+|`nc.port(2389).listen().on('data', onData)`|`inputStream.pipe(nc2.port(2389).connect())`|
+
+```javascript
+function onData (socket, chunk) {
+  console.log(socket.id, 'got', chunk) // Buffer <...>
+}
+```
+
 ## CLI usage
 
 For the standalone usage install the `nc` CLI package:
@@ -148,6 +167,8 @@ Coverage:
 
 - [x] Test the `.serve(input)` method
 - [x] Tests the keepalive connection with `.pipe()` and `serve()`.
+- [ ] serve can accepts both a string or a stream.
+- [ ] Concat multiple nc stream istances with `serve`
 - [ ] UDP.
 
 ## Known limitations

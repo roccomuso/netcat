@@ -36,6 +36,7 @@
     "tape": "^4.6.3"
   },
   "dependencies": {
-    "debug": "^2.6.6"
+    "debug": "^2.6.6",
+    "shortid": "^2.2.8"
   }
 }
