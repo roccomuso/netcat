@@ -29,6 +29,7 @@ test('Client and Server constructor', function (t) {
 
 test('Server basic methods', function(t){
   t.plan(14)
+
   try {
     var nc = new NetcatServer()
     /* checking default values */
@@ -56,6 +57,43 @@ test('Server basic methods', function(t){
     t.ok(nc.server, 'server listen')
     nc.close(function(){
       t.ok(true, 'close server')
+    })
+
+  } catch (e) {
+    t.fail(e)
+  }
+
+})
+
+test('Client basic methods', function(t){
+  t.plan(12)
+
+  try {
+    var srv = new NetcatServer().port(2390).listen() // server
+    var nc = new NetcatClient()
+    /* checking default values */
+    t.equal(nc._port, null, 'port null by default')
+    t.equal(nc._protocol, 'tcp', 'protocol is tcp by default')
+    t.equal(nc._address, '127.0.0.1', '127.0.0.1 default address')
+    t.equal(nc._interval, false, 'no interval by default')
+    /* set methods */
+    nc.udp()
+    t.equal(nc._protocol, 'udp', 'setting udp as protocol')
+    nc.tcp()
+    t.equal(nc._protocol, 'tcp', 'setting tcp as protocol')
+    nc.address('localhost')
+    t.equal(nc._address, 'localhost', 'setting address localhost')
+    nc.addr('127.0.0.1')
+    t.equal(nc._address, '127.0.0.1', 'using addr alias')
+    nc.port(2390)
+    t.equal(nc._port, 2390, 'setting port 2390')
+    nc.connect(function(){
+      t.ok(nc.client, 'client connected')
+      t.ok(nc.stream(), 'stream available')
+      nc.close(function(){
+        srv.close()
+        t.ok(true, 'close server')
+      })
     })
 
   } catch (e) {
