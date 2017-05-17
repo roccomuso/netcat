@@ -1,4 +1,6 @@
 module.exports = {
   server: require('./server'),
-  client: require('./client')
+  client: require('./client'),
+  Server: require('./server'), // alias
+  Client: require('./client') // alias
 }
