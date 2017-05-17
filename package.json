@@ -4,7 +4,7 @@
   "description": "Netcat client and server modules written in pure Javascript for Node.js",
   "main": "index.js",
   "scripts": {
-    "test": "standard && nsp check"
+    "test": "tape ./tests/**/*.js | node_modules/.bin/tap-spec && standard && nsp check"
   },
   "repository": {
     "type": "git",
@@ -30,7 +30,9 @@
   "homepage": "https://github.com/roccomuso/netcat#readme",
   "devDependencies": {
     "nsp": "^2.6.3",
-    "standard": "^10.0.2"
+    "standard": "^10.0.2",
+    "tap-spec": "^4.1.1",
+    "tape": "^4.6.3"
   },
   "dependencies": {
     "debug": "^2.6.6"
