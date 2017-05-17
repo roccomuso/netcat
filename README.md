@@ -59,7 +59,7 @@ Available Options:
 
 | Server              | Client                    |
 |---------------------|------------------------------------|
-|`nc.port(2389).listen().pipe(outputStream)`|`inputStream.pipe(nc2.port(2389).connect())`|
+|`nc.port(2389).listen().pipe(outputStream)`|`inputStream.pipe(nc2.port(2389).connect().stream())`|
 
 or viceversa you can do the equivalent of `nc -l -p 2389 < filename.txt` and when someone else connects to your port 2389, the file is sent to them whether they wanted it or not:
 
@@ -71,7 +71,7 @@ or viceversa you can do the equivalent of `nc -l -p 2389 < filename.txt` and whe
 
 | Server              | Client                    |
 |---------------------|------------------------------------|
-|`nc.port(2389).k().listen()`|`inputStream.pipe(nc2.port(2389).connect())`|
+|`nc.port(2389).k().listen()`|`inputStream.pipe(nc2.port(2389).connect().stream())`|
 
 The server will be kept alive and not being closed after the first connection. (`k()` is an alias for `keepalive()`)
 
