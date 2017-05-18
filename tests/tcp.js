@@ -103,7 +103,7 @@ test('Client basic methods', function(t){
 })
 
 
-test('TCP Server listen', function(t){
+test('TCP Client Server connection', function(t){
   t.plan(1)
 
   var nc = new NetcatServer()
@@ -128,9 +128,11 @@ test('TCP Server listen', function(t){
 })
 
 /*
-test('', function(t){
+test('Client: send data', function(t){
   t.plan(1)
-  nc.port(2389).k().listen().serve('Client.js').pipe(fs.createWriteStream('output.txt'))
+  // TODO: send raw (Buffer) data
+  // TODO: send plain-text data
+
 })
 
 test('Receive file with pipe()', function(t){
@@ -142,14 +144,9 @@ test('Receive file with pipe()', function(t){
 
 })
 
-test('Serve file', function(t){
+test('Serve a file with serve()', function(t){
   t.plan(1)
-
-})
-
-test('Serve stream', function(t){
-  t.plan(1)
-
+  nc.port(2389).k().listen().serve('Client.js').pipe(fs.createWriteStream('output.txt'))
 })
 
 test('Serving file with keepalive', function(t){
@@ -162,7 +159,7 @@ test('Serving stream with keepalive', function(t){
 
 })
 
-test('Concat multiple nc stream istances with serve', function(t){
+test('Concat multiple nc stream istances with serve()', function(t){
   t.plan(1)
 
 })
