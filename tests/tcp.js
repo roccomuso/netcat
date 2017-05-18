@@ -24,10 +24,9 @@ test('Client and Server constructor', function (t) {
   } catch (e) {
     t.fail(e)
   }
-
 })
 
-test('Server basic methods', function(t){
+test('Server basic methods', function (t) {
   t.plan(14)
 
   try {
@@ -55,17 +54,15 @@ test('Server basic methods', function(t){
     t.equal(nc._keepalive, false, 'set keepalive false')
     nc.listen()
     t.ok(nc.server, 'server listen')
-    nc.close(function(){
+    nc.close(function () {
       t.ok(true, 'close server')
     })
-
   } catch (e) {
     t.fail(e)
   }
-
 })
 
-test('Client basic methods', function(t){
+test('Client basic methods', function (t) {
   t.plan(12)
 
   try {
@@ -87,44 +84,40 @@ test('Client basic methods', function(t){
     t.equal(nc._address, '127.0.0.1', 'using addr alias')
     nc.port(2390)
     t.equal(nc._port, 2390, 'setting port 2390')
-    nc.connect(function(){
+    nc.connect(function () {
       t.ok(nc.client, 'client connected')
       t.ok(nc.stream(), 'stream available')
-      nc.close(function(){
+      nc.close(function () {
         srv.close()
         t.ok(true, 'close server')
       })
     })
-
   } catch (e) {
     t.fail(e)
   }
-
 })
 
-
-test('TCP Client Server connection', function(t){
+test('TCP Client Server connection', function (t) {
   t.plan(1)
 
   var nc = new NetcatServer()
   var nc2 = new NetcatClient()
 
-  nc.port(2389).listen().on('data', function(socket, data){
+  nc.port(2389).listen().on('data', function (socket, data) {
     t.ok(socket.id, 'Socket got an ID assigned')
     t.equal(data.toString(), 'Hello World', 'Got expected string')
     close()
   })
 
-  nc2.addr('127.0.0.1').port(2389).connect(function(){
+  nc2.addr('127.0.0.1').port(2389).connect(function () {
     this.write('Hello World')
   })
 
-  function close(){
-    nc.close(function(){
+  function close () {
+    nc.close(function () {
       t.ok(true, 'close server')
     })
   }
-
 })
 
 /*
