@@ -107,7 +107,7 @@ The netcat server extends the `EventEmitter` class. You'll be able to catch some
 
 | Server              | Client                    |
 |---------------------|------------------------------------|
-|`nc.port(2389).listen().on('data', onData)`|`inputStream.pipe(nc2.port(2389).connect())`|
+|`nc.port(2389).listen().on('data', onData)`|`inputStream.pipe(nc2.port(2389).connect().stream())`|
 
 ```javascript
 function onData (socket, chunk) {
