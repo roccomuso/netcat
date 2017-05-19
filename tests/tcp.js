@@ -58,13 +58,14 @@ test('Server basic methods', function (t) {
       t.ok(true, 'close server')
     })
   } catch (e) {
+    console.log(e)
     t.fail(e)
   }
 })
 
 test('Client basic methods', function (t) {
   t.plan(13)
-  t.timeoutAfter(4000)
+  t.timeoutAfter(5000)
 
   try {
     var srv = new NetcatServer().port(2390).listen() // server
@@ -96,13 +97,14 @@ test('Client basic methods', function (t) {
       })
     })
   } catch (e) {
+    console.log(e)
     t.fail(e)
   }
 })
 
 test('TCP Client Server connection', function (t) {
   t.plan(4)
-  t.timeoutAfter(3000)
+  t.timeoutAfter(5000)
 
   var nc = new NetcatServer()
   var nc2 = new NetcatClient()
