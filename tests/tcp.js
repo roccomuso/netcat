@@ -63,7 +63,8 @@ test('Server basic methods', function (t) {
 })
 
 test('Client basic methods', function (t) {
-  t.plan(12)
+  t.plan(13)
+  t.timeoutAfter(4000)
 
   try {
     var srv = new NetcatServer().port(2390).listen() // server
@@ -88,8 +89,10 @@ test('Client basic methods', function (t) {
       t.ok(nc.client, 'client connected')
       t.ok(nc.stream(), 'stream available')
       nc.close(function () {
-        srv.close()
-        t.ok(true, 'close server')
+        t.ok(true, 'close client')
+        srv.close(function(){
+          t.ok(true, 'close server')
+        })
       })
     })
   } catch (e) {
@@ -98,19 +101,22 @@ test('Client basic methods', function (t) {
 })
 
 test('TCP Client Server connection', function (t) {
-  t.plan(1)
+  t.plan(4)
+  t.timeoutAfter(3000)
 
   var nc = new NetcatServer()
   var nc2 = new NetcatClient()
 
-  nc.port(2389).listen().on('data', function (socket, data) {
+  nc.port(2391).listen().on('data', function (socket, data) {
     t.ok(socket.id, 'Socket got an ID assigned')
     t.equal(data.toString(), 'Hello World', 'Got expected string')
     close()
   })
 
-  nc2.addr('127.0.0.1').port(2389).connect(function () {
-    this.write('Hello World')
+  nc2.addr('127.0.0.1').port(2391).connect(function () {
+    t.equal(this, nc2, 'Got client istance')
+    console.log('Sending message')
+    this.send('Hello World')
   })
 
   function close () {
