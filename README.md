@@ -16,6 +16,12 @@ This module implements all the basic netcat's features. To use as standalone too
 - [ ] Port scanning
 - [ ] Banner grabbing
 
+| OS    |  Supported |
+|-------|--------------------|
+| Linux | :white_check_mark: |
+| Mac OS | :white_check_mark: |
+| Windows | :white_check_mark: |
+
 ## Enhancement
 
 - [ ] Crypto
