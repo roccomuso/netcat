@@ -201,21 +201,45 @@ test('Serving a file with serve()', function (t) {
 
 })
 
+
+test('Serving a file using keepalive to multiple clients', function (t) {
+  var nClients = 10 // 10 clients
+  t.plan(nClients + 1)
+  t.timeoutAfter(5000)
+  var k = 0
+
+  var testFile = path.join(__dirname, 'tcp.js')
+  var inputFile = fs.readFileSync(testFile)
+
+  var nc = new NetcatServer()
+  nc.port(2393).keepalive().listen().serve(testFile)
+
+  var NCs = {}
+  for (var i = 0; i < nClients; i++) {
+    NCs[i] = new NetcatClient()
+    NCs[i].addr('127.0.0.1').port(2393).connect().pipe(concat(function(file){
+      t.equal(file.toString(), inputFile.toString(), 'client got expected file')
+      if (++k === nClients) {
+        nc.close(function(){
+          t.ok(true, 'server closed')
+        })
+      }
+    }))
+  }
+
+})
+
 /*
-test('Serving a file with keepalive', function(t){
-  t.plan(1)
-  nc.port(2389).k().listen().serve('Client.js').pipe(fs.createWriteStream('output.txt'))
 
-})
-
-test('Serving a stream with keepalive', function(t){
+test('Serving an istance of stream', function(t){
   t.plan(1)
 
 })
 
-test('Concat multiple nc stream istances with serve()', function(t){
+test('Serving an istance of stream with keepalive', function(t){
   t.plan(1)
 
 })
+
 
 */
