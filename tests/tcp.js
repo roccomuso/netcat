@@ -2,6 +2,7 @@
 
 const test = require('tape')
 const fs = require('fs')
+const path = require('path')
 const concat = require('concat-stream')
 const Netcat = require('../')
 const NetcatServer = Netcat.server
@@ -111,7 +112,7 @@ test('TCP Client Server connection', function (t) {
 
   nc.port(2391).listen().on('data', function (socket, data) {
     t.ok(socket.id, 'Socket got an ID assigned')
-    t.equal(data.toString(), 'Hello World', 'Got expected string')
+    t.equal(data.toString(), 'Hello World', 'got expected string')
     close()
   })
 
@@ -138,7 +139,7 @@ test('Client: send raw buffer', function(t){
 
   nc.port(2391).listen().on('data', function (socket, data) {
     t.ok(socket.id, 'Socket got an ID assigned')
-    t.deepEqual(data, Buffer.from('hello world'), 'Got expected Buffer')
+    t.deepEqual(data, Buffer.from('hello world'), 'got expected Buffer')
     close()
   })
 
@@ -156,16 +157,30 @@ test('Client: send raw buffer', function(t){
 
 })
 
-/*
 
-test('Receive file with pipe()', function(t){
-  t.plan(1)
+test('Transfer a file (stream)', function (t) {
+  t.plan(2)
+  t.timeoutAfter(4000)
+
+  var nc = new NetcatServer()
+  var testFile = path.join(__dirname, 'tcp.js')
+  var inputFile = fs.readFileSync(testFile)
 
   var concatStream = concat(function(file){
-
+    t.equal(file.toString(), inputFile.toString(), 'got expected file')
+    console.log('got file')
   })
 
+  nc.port(2391).listen().pipe(concatStream).on('srvClose', function(){
+    t.ok(true, 'server closed (no keepalive)')
+  })
+
+  var nc2 = new NetcatClient()
+  fs.createReadStream(testFile).pipe(nc2.addr('127.0.0.1').port(2391).connect().stream())
+
 })
+
+/*
 
 test('Serve a file with serve()', function(t){
   t.plan(1)
