@@ -128,13 +128,35 @@ test('TCP Client Server connection', function (t) {
   }
 })
 
-/*
-test('Client: send data', function(t){
-  t.plan(1)
-  // TODO: send raw (Buffer) data
-  // TODO: send plain-text data
+
+test('Client: send raw buffer', function(t){
+  t.plan(4)
+  t.timeoutAfter(4000)
+
+  var nc = new NetcatServer()
+  var nc2 = new NetcatClient()
+
+  nc.port(2391).listen().on('data', function (socket, data) {
+    t.ok(socket.id, 'Socket got an ID assigned')
+    t.deepEqual(data, Buffer.from('hello world'), 'Got expected Buffer')
+    close()
+  })
+
+  nc2.addr('127.0.0.1').port(2391).connect(function () {
+    t.equal(this, nc2, 'Got client istance')
+    console.log('Sending Buffer')
+    this.send(Buffer.from('hello world'))
+  })
+
+  function close () {
+    nc.close(function () {
+      t.ok(true, 'close server')
+    })
+  }
 
 })
+
+/*
 
 test('Receive file with pipe()', function(t){
   t.plan(1)
