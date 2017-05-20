@@ -167,8 +167,7 @@ test('Transfer a file (stream)', function (t) {
   var inputFile = fs.readFileSync(testFile)
 
   var concatStream = concat(function(file){
-    t.equal(file.toString(), inputFile.toString(), 'got expected file')
-    console.log('got file')
+    t.equal(file.toString(), inputFile.toString(), 'server got expected file')
   })
 
   nc.port(2391).listen().pipe(concatStream).on('srvClose', function(){
@@ -180,19 +179,36 @@ test('Transfer a file (stream)', function (t) {
 
 })
 
-/*
 
-test('Serve a file with serve()', function(t){
+test('Serving a file with serve()', function (t) {
+  t.plan(2)
+  t.timeoutAfter(4000)
+
+  var testFile = path.join(__dirname, 'tcp.js')
+  var inputFile = fs.readFileSync(testFile)
+
+  var nc = new NetcatServer()
+  nc.port(2392).listen().serve(testFile).on('srvClose', function(){
+    t.ok(true, 'server closed (no keepalive)')
+  })
+
+  var concatStream = concat(function(file){
+    t.equal(file.toString(), inputFile.toString(), 'client got expected file')
+  })
+
+  var nc2 = new NetcatClient()
+  nc2.addr('127.0.0.1').port(2392).connect().pipe(concatStream)
+
+})
+
+/*
+test('Serving a file with keepalive', function(t){
   t.plan(1)
   nc.port(2389).k().listen().serve('Client.js').pipe(fs.createWriteStream('output.txt'))
-})
-
-test('Serving file with keepalive', function(t){
-  t.plan(1)
 
 })
 
-test('Serving stream with keepalive', function(t){
+test('Serving a stream with keepalive', function(t){
   t.plan(1)
 
 })
