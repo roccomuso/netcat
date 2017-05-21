@@ -262,3 +262,20 @@ test('Serving a stream using keepalive to multiple clients', function (t) {
     }))
   }
 })
+
+test('Serving a raw Buffer', function (t) {
+  t.plan(2)
+  t.timeoutAfter(4000)
+
+  var nc = new NetcatServer()
+  nc.port(2392).listen().serve(Buffer.from('Hello World')).on('srvClose', function () {
+    t.ok(true, 'server closed (no keepalive)')
+  })
+
+  var concatStream = concat(function (buf) {
+    t.equal(buf.toString(), 'Hello World', 'client got expected Buffer')
+  })
+
+  var nc2 = new NetcatClient()
+  nc2.addr('127.0.0.1').port(2392).connect().pipe(concatStream)
+})
