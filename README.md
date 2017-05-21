@@ -8,13 +8,13 @@ This module implements all the basic netcat's features. To use as standalone too
 
 ## What you can do :computer:
 
-- [ ] Backdoor (Reverse Shell)
+- [x] Backdoor (Reverse Shell)
 - [ ] Honeypot
+- [x] File transfer
 - [ ] Port forwarding
-- [ ] File transfer
-- [ ] Web Server
+- [ ] Proxy
+- [x] Web Server
 - [ ] Port scanning
-- [ ] Banner grabbing
 
 | OS    |  Supported |
 |-------|--------------------|
@@ -96,6 +96,19 @@ The server will be kept alive and not being closed after the first connection. (
 
 The `exec()` method execute the given command and pipe together his `stdout` and `stderr` with the clients `socket`.
 
+#### Reverse Backdoor shell
+
+TODO...
+
+#### Netcat as a proxy
+
+TODO...
+
+Netcat can be very easily configured as a proxy server.
+
+| Server 1            | Server 2             | Client                 |
+|---------------------|----------------------|------------------------|
+|`nc2.port(2389).serve(Buffer.from('hi')).listen()`|`nc.port(2400).listen().serve().pipe(nc2)`|`inputStream.pipe(nc3.port(2400).connect().stream())`|
 
 
 ## API
