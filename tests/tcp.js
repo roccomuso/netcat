@@ -252,11 +252,32 @@ test('Serving an istance of stream', function(t){
 
 })
 
-/*
-test('Serving an istance of stream with keepalive', function(t){
-  t.plan(1)
+
+test('Serving a stream using keepalive to multiple clients', function(t){
+  var nClients = 10 // 10 clients
+  t.plan(nClients + 1)
+  t.timeoutAfter(5000)
+  var k = 0
+
+  var testFile = path.join(__dirname, 'tcp.js')
+  var inputFile = fs.readFileSync(testFile)
+  var inputStream = fs.createReadStream(testFile)
+
+  var nc = new NetcatServer()
+  nc.port(2394).k().listen().serve(inputStream)
+
+  var NCs = {}
+  for (var i = 0; i < nClients; i++) {
+    NCs[i] = new NetcatClient()
+    NCs[i].addr('127.0.0.1').port(2394).connect().pipe(concat(function(file){
+      t.equal(file.toString(), inputFile.toString(), 'client got expected file')
+      if (++k === nClients) {
+        nc.close(function(){
+          t.ok(true, 'server closed')
+        })
+      }
+    }))
+  }
+
 
 })
-
-
-*/
