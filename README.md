@@ -85,7 +85,16 @@ The server will be kept alive and not being closed after the first connection. (
 
 | Server              | Client                             |
 |---------------------|------------------------------------|
-|`nc.port(2392).listen().serve(Buffer.from('Hello World'))`|`nc2.port(2389).connect().on('data', console.log)`|
+|`nc.port(2389).listen().serve(Buffer.from('Hello World'))`|`nc2.port(2389).connect().on('data', console.log)`|
+
+
+#### Backdoor shell
+
+| Server              | Client                             |
+|---------------------|------------------------------------|
+|`nc.port(2389).listen().exec('/bin/bash')`|`process.stdin.pipe(nc2.port(2389).connect().pipe(process.stdout).stream())`|
+
+The `exec()` method execute the given command and pipe together his `stdout` and `stderr` with the clients `socket`.
 
 
 
