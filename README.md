@@ -1,12 +1,12 @@
 # netcat [![NPM Version](https://img.shields.io/npm/v/netcat.svg)](https://www.npmjs.com/package/netcat) [![Build Status](https://travis-ci.org/roccomuso/netcat.svg?branch=master)](https://travis-ci.org/roccomuso/netcat) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
-Netcat client and server modules written in pure Javascript for Node.js.
+> Netcat client and server modules written in pure Javascript for Node.js.
 
 **Under active development... stay out**
 
 This module implements all the basic netcat's features. To use as standalone tool install the [nc](https://github.com/roccomuso/nc) package.
 
-## What you can do
+## What you can do :computer:
 
 - [ ] Backdoor (Reverse Shell)
 - [ ] Honeypot
@@ -57,36 +57,35 @@ Available Options:
 
 #### Server and Client connection
 
-| Server                 | Client                     |
+| Server                 | Client                             |
 |------------------------|------------------------------------|
 |`nc.port(2389).listen()`|`nc2.addr('127.0.0.1').port(2389).connect()`|
 
 #### Transfer file
 
-| Server              | Client                    |
+| Server              | Client                             |
 |---------------------|------------------------------------|
 |`nc.port(2389).listen().pipe(outputStream)`|`inputStream.pipe(nc2.port(2389).connect().stream())`|
 
 or viceversa you can do the equivalent of `nc -l -p 2389 < filename.txt` and when someone else connects to your port 2389, the file is sent to them whether they wanted it or not:
 
-| Server              | Client                    |
+| Server              | Client                             |
 |---------------------|------------------------------------|
 |`nc.port(2389).serve('filename.txt').listen()`|`nc2.port(2389).connect().pipe(outputStream)`|
 
 #### Keepalive connection
 
-| Server              | Client                    |
+| Server              | Client                             |
 |---------------------|------------------------------------|
 |`nc.port(2389).k().listen()`|`inputStream.pipe(nc2.port(2389).connect().stream())`|
 
 The server will be kept alive and not being closed after the first connection. (`k()` is an alias for `keepalive()`)
 
-#### Hex dump
+#### Serve raw buffer
 
-To obtain a hex dump file of the data sent either way, use "-o logfile".
-The dump lines begin with "<" or ">" to respectively indicate "from the net" or "to the net", and contain the total count per direction, and hex and ascii representations of the traffic. Capturing a hex dump naturally slows netcat
-down a bit, so don't use it where speed is critical.
-
+| Server              | Client                             |
+|---------------------|------------------------------------|
+|`nc.port(2392).listen().serve(Buffer.from('Hello World'))`|`nc2.port(2389).connect().on('data', console.log)`|
 
 
 
@@ -104,7 +103,7 @@ When you set the keepalive, the server will stay up and possibly the outStream g
 
 #### `serve()`
 
-The `serve` method accepts either a string (indicating a file name) or a Readable stream.
+The `serve` method accepts either a string (indicating a file name), a Readable stream or a Buffer.
 When you pass a readable stream the keepalive method could cause the stream to be consumed at the first request and no more can be served (The stream is not cached in a buffer).
 
 ## Events
@@ -136,29 +135,28 @@ Example:
 Available options:
 
 
-```
--c shell commands    as `-e’; use /bin/sh to exec [dangerous!!]
--e filename          program to exec after connect [dangerous!!]
--b                   allow broadcasts
--g gateway           source-routing hop point[s], up to 8
--G num               source-routing pointer: 4, 8, 12
--h                   this cruft
--i secs              delay interval for lines sent, ports scanned
--k set               keepalive option on socket
--l                   listen mode, for inbound connects
--n                   numeric-only IP addresses, no DNS
--o file              hex dump of traffic
--p port              local port number
--r                   randomize local and remote ports
--q secs              quit after EOF on stdin and delay of secs
--s addr              local source address
--T tos               set Type Of Service
--t                   answer TELNET negotiation
--u                   UDP mode
--v                   verbose
--w secs              timeout for connects and final net reads (client-side)
--z                   zero-I/O mode [used for scanning]
-```
+- [ ] `-c shell commands    as '-e'; use /bin/sh to exec [dangerous!!]`
+- [ ] `-e filename          program to exec after connect [dangerous!!]`
+- [ ] `-b                   allow broadcasts`
+- [ ] `-g gateway           source-routing hop point[s], up to 8`
+- [ ] `-G num               source-routing pointer: 4, 8, 12`
+- [x] `-i secs              delay interval for lines sent, ports scanned (client-side)`
+- [x] `-h                   this cruft`
+- [x] `-k set               keepalive option on socket`
+- [x] `-l                   listen mode, for inbound connects`
+- [ ] `-n                   numeric-only IP addresses, no DNS`
+- [ ] `-o file              hex dump of traffic (CLI)`
+- [x] `-p port              local port number`
+- [ ] `-r                   randomize local and remote ports`
+- [ ] `-q secs              quit after EOF on stdin and delay of secs`
+- [x] `-s addr              local source address`
+- [ ] `-T tos               set Type Of Service`
+- [ ] `-t                   answer TELNET negotiation`
+- [ ] `-u                   UDP mode`
+- [x] `-v                   verbose`
+- [x] `-w secs              timeout for connects and final net reads (client-side)`
+- [ ] `-z                   zero-I/O mode [used for scanning]`
+
 
 ## DEBUG
 
@@ -173,8 +171,9 @@ Coverage:
 
 - [x] Test the `.serve(input)` method
 - [x] Tests the keepalive connection with `.pipe()` and `serve()`.
-- [ ] serve can accepts both a string or a stream.
-- [ ] Concat multiple nc stream istances with `serve`
+- [x] serve can accepts both a string or a stream.
+- [ ] Hex dump
+- [ ] Backdoor shell
 - [ ] UDP.
 
 ## Known limitations
