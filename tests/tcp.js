@@ -8,12 +8,6 @@ const Netcat = require('../')
 const NetcatServer = Netcat.server
 const NetcatClient = Netcat.client
 
-/*
-Tests:
-.listen()
-double .listen() (EADDR in use expected)
-*/
-
 test('Client and Server constructor', function (t) {
   t.plan(2) // plan assertions
 
@@ -92,7 +86,7 @@ test('Client basic methods', function (t) {
       t.ok(nc.stream(), 'stream available')
       nc.close(function () {
         t.ok(true, 'close client')
-        srv.close(function(){
+        srv.close(function () {
           t.ok(true, 'close server')
         })
       })
@@ -129,8 +123,7 @@ test('TCP Client Server connection', function (t) {
   }
 })
 
-
-test('Client: send raw buffer', function(t){
+test('Client: send raw buffer', function (t) {
   t.plan(4)
   t.timeoutAfter(4000)
 
@@ -154,9 +147,7 @@ test('Client: send raw buffer', function(t){
       t.ok(true, 'close server')
     })
   }
-
 })
-
 
 test('Transfer a file (stream)', function (t) {
   t.plan(2)
@@ -166,19 +157,17 @@ test('Transfer a file (stream)', function (t) {
   var testFile = path.join(__dirname, 'tcp.js')
   var inputFile = fs.readFileSync(testFile)
 
-  var concatStream = concat(function(file){
+  var concatStream = concat(function (file) {
     t.equal(file.toString(), inputFile.toString(), 'server got expected file')
   })
 
-  nc.port(2391).listen().pipe(concatStream).on('srvClose', function(){
+  nc.port(2391).listen().pipe(concatStream).on('srvClose', function () {
     t.ok(true, 'server closed (no keepalive)')
   })
 
   var nc2 = new NetcatClient()
   fs.createReadStream(testFile).pipe(nc2.addr('127.0.0.1').port(2391).connect().stream())
-
 })
-
 
 test('Serving a file with serve()', function (t) {
   t.plan(2)
@@ -188,19 +177,17 @@ test('Serving a file with serve()', function (t) {
   var inputFile = fs.readFileSync(testFile)
 
   var nc = new NetcatServer()
-  nc.port(2392).listen().serve(testFile).on('srvClose', function(){
+  nc.port(2392).listen().serve(testFile).on('srvClose', function () {
     t.ok(true, 'server closed (no keepalive)')
   })
 
-  var concatStream = concat(function(file){
+  var concatStream = concat(function (file) {
     t.equal(file.toString(), inputFile.toString(), 'client got expected file')
   })
 
   var nc2 = new NetcatClient()
   nc2.addr('127.0.0.1').port(2392).connect().pipe(concatStream)
-
 })
-
 
 test('Serving a file using keepalive to multiple clients', function (t) {
   var nClients = 10 // 10 clients
@@ -217,20 +204,18 @@ test('Serving a file using keepalive to multiple clients', function (t) {
   var NCs = {}
   for (var i = 0; i < nClients; i++) {
     NCs[i] = new NetcatClient()
-    NCs[i].addr('127.0.0.1').port(2393).connect().pipe(concat(function(file){
+    NCs[i].addr('127.0.0.1').port(2393).connect().pipe(concat(function (file) {
       t.equal(file.toString(), inputFile.toString(), 'client got expected file')
       if (++k === nClients) {
-        nc.close(function(){
+        nc.close(function () {
           t.ok(true, 'server closed')
         })
       }
     }))
   }
-
 })
 
-
-test('Serving an istance of stream', function(t){
+test('Serving an istance of stream', function (t) {
   t.plan(2)
   t.timeoutAfter(4000)
 
@@ -239,21 +224,19 @@ test('Serving an istance of stream', function(t){
   var inputStream = fs.createReadStream(testFile)
 
   var nc = new NetcatServer()
-  nc.port(2392).listen().serve(inputStream).on('srvClose', function(){
+  nc.port(2392).listen().serve(inputStream).on('srvClose', function () {
     t.ok(true, 'server closed (no keepalive)')
   })
 
-  var concatStream = concat(function(file){
+  var concatStream = concat(function (file) {
     t.equal(file.toString(), inputFile.toString(), 'client got expected stream')
   })
 
   var nc2 = new NetcatClient()
   nc2.addr('127.0.0.1').port(2392).connect().pipe(concatStream)
-
 })
 
-
-test('Serving a stream using keepalive to multiple clients', function(t){
+test('Serving a stream using keepalive to multiple clients', function (t) {
   var nClients = 10 // 10 clients
   t.plan(nClients + 1)
   t.timeoutAfter(5000)
@@ -269,15 +252,13 @@ test('Serving a stream using keepalive to multiple clients', function(t){
   var NCs = {}
   for (var i = 0; i < nClients; i++) {
     NCs[i] = new NetcatClient()
-    NCs[i].addr('127.0.0.1').port(2394).connect().pipe(concat(function(file){
+    NCs[i].addr('127.0.0.1').port(2394).connect().pipe(concat(function (file) {
       t.equal(file.toString(), inputFile.toString(), 'client got expected file')
       if (++k === nClients) {
-        nc.close(function(){
+        nc.close(function () {
           t.ok(true, 'server closed')
         })
       }
     }))
   }
-
-
 })
