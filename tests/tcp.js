@@ -2,6 +2,7 @@
 
 const test = require('tape')
 const fs = require('fs')
+const os = require('os')
 const path = require('path')
 const concat = require('concat-stream')
 const Netcat = require('../')
@@ -278,4 +279,30 @@ test('Serving a raw Buffer', function (t) {
 
   var nc2 = new NetcatClient()
   nc2.addr('127.0.0.1').port(2392).connect().pipe(concatStream)
+})
+
+test('Exec()', function (t) {
+  t.plan(2)
+  t.timeoutAfter(5000)
+
+  var cmd = (os.platform() === 'win32') ? 'type' : 'cat'
+
+  var nc = new NetcatServer()
+  nc.port(2400).listen()
+  .exec(cmd)
+  .on('srvClose', function(){
+    t.ok(true, 'server closed (no keepalive)')
+  })
+
+  var nc2 = new NetcatClient()
+  nc2.port(2400).connect(function () {
+    var self = this
+    setTimeout(function () {
+      self.send('Hello World')
+    }, 1000)
+  }).on('data', function (buf) { // one chunk
+    t.equal(buf.toString(), 'Hello World', 'got expected stdout')
+    nc2.close()
+  })
+
 })

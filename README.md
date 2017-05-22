@@ -194,6 +194,7 @@ Coverage:
 - [x] Test the `.serve(input)` method
 - [x] Tests the keepalive connection with `.pipe()` and `serve()`.
 - [x] serve can accepts both a string or a stream.
+- [x] `exec()` method
 - [ ] Hex dump
 - [ ] Backdoor shell
 - [ ] UDP.
