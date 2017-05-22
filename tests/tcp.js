@@ -282,7 +282,7 @@ test('Serving a raw Buffer', function (t) {
 })
 
 test('Exec()', function (t) {
-  t.plan(2)
+  t.plan(3)
   t.timeoutAfter(5000)
 
   var cmd = (os.platform() === 'win32') ? 'type' : 'cat'
@@ -293,6 +293,7 @@ test('Exec()', function (t) {
   .on('srvClose', function(){
     t.ok(true, 'server closed (no keepalive)')
   })
+  t.equal(nc._exec, cmd, 'spawning process')
 
   var nc2 = new NetcatClient()
   nc2.port(2400).connect(function () {
