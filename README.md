@@ -128,6 +128,18 @@ When you set the keepalive, the server will stay up and possibly the outStream g
 The `serve` method accepts either a string (indicating a file name), a Readable stream or a Buffer.
 When you pass a readable stream the keepalive method could cause the stream to be consumed at the first request and no more can be served (The stream is not cached in a buffer).
 
+#### `exec()`
+
+The `exec()` method execute the given command and pipe together his `stdout` and `stderr` with the clients `socket`. It accepts a string and an array of args as second param. If a pipe char is found `|` then all the commands will be processed under a `sh -c`.
+
+Example:
+
+```javascript
+nc.p(2389).exec('base64', ['-d']).listen()
+// OR
+nc.p(2389).exec('base64 | grep hello').listen()
+```
+
 ## Events
 
 The netcat server extends the `EventEmitter` class. You'll be able to catch some events straight from the sockets. For example the `data` event:
