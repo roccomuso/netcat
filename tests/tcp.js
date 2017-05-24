@@ -290,7 +290,7 @@ test('Exec()', function (t) {
   var nc = new NetcatServer()
   nc.port(2400).listen()
   .exec(cmd)
-  .on('srvClose', function(){
+  .on('srvClose', function () {
     t.ok(true, 'server closed (no keepalive)')
   })
   t.equal(nc._exec, cmd, 'spawning process')
@@ -305,5 +305,4 @@ test('Exec()', function (t) {
     t.equal(buf.toString(), 'Hello World', 'got expected stdout')
     nc2.close()
   })
-
 })
