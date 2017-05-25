@@ -325,7 +325,7 @@ test('Client exec()', function (t) {
 
   var nc = new NetcatServer()
   nc.port(2401).listen()
-  .once('connection', function(socket){
+  .once('connection', function (socket) {
     t.ok(socket, 'client connected')
     socket.write('Hello World')
   })
@@ -341,5 +341,4 @@ test('Client exec()', function (t) {
   var nc2 = new NetcatClient()
   nc2.port(2401).exec(cmd).connect()
   t.equal(nc2._exec, cmd, 'exec set')
-
 })
