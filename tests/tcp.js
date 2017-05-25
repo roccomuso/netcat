@@ -23,7 +23,7 @@ test('Client and Server constructor', function (t) {
 })
 
 test('Server basic methods', function (t) {
-  t.plan(14)
+  t.plan(15)
 
   try {
     var nc = new NetcatServer()
@@ -48,6 +48,10 @@ test('Server basic methods', function (t) {
     t.equal(nc._keepalive, true, 'set keepalive true')
     nc.k(false)
     t.equal(nc._keepalive, false, 'set keepalive false')
+    nc.exec('/bin/sh')
+    t.equal(nc._exec, '/bin/sh', 'setting exec to /bin/sh')
+    nc.exec(null)
+
     nc.listen()
     t.ok(nc.server, 'server listen')
     nc.close(function () {
@@ -60,7 +64,7 @@ test('Server basic methods', function (t) {
 })
 
 test('Client basic methods', function (t) {
-  t.plan(13)
+  t.plan(15)
   t.timeoutAfter(5000)
 
   try {
@@ -82,6 +86,12 @@ test('Client basic methods', function (t) {
     t.equal(nc._address, '127.0.0.1', 'using addr alias')
     nc.port(2390)
     t.equal(nc._port, 2390, 'setting port 2390')
+    nc.retry(0)
+    t.equal(nc._retry, 0, 'setting retry to 0')
+    nc.exec('/bin/sh')
+    t.equal(nc._exec, '/bin/sh', 'setting exec to /bin/sh')
+    nc.exec(null)
+
     nc.connect(function () {
       t.ok(nc.client, 'client connected')
       t.ok(nc.stream(), 'stream available')
@@ -281,7 +291,7 @@ test('Serving a raw Buffer', function (t) {
   nc2.addr('127.0.0.1').port(2392).connect().pipe(concatStream)
 })
 
-test('Exec()', function (t) {
+test('Server exec()', function (t) {
   t.plan(3)
   t.timeoutAfter(5000)
 
@@ -305,4 +315,31 @@ test('Exec()', function (t) {
     t.equal(buf.toString(), 'Hello World', 'got expected stdout')
     nc2.close()
   })
+})
+
+test('Client exec()', function (t) {
+  t.plan(5)
+  t.timeoutAfter(5000)
+
+  var cmd = (os.platform() === 'win32') ? 'type' : 'cat'
+
+  var nc = new NetcatServer()
+  nc.port(2401).listen()
+  .once('connection', function(socket){
+    t.ok(socket, 'client connected')
+    socket.write('Hello World')
+  })
+  .once('data', function (sock, buf) { // one chunk
+    t.ok(sock, 'got socket istance')
+    t.equal(buf.toString(), 'Hello World', 'got expected stdout')
+    nc.close()
+  })
+  .once('srvClose', function () {
+    t.ok(true, 'server closed (no keepalive)')
+  })
+
+  var nc2 = new NetcatClient()
+  nc2.port(2401).exec(cmd).connect()
+  t.equal(nc2._exec, cmd, 'exec set')
+
 })
