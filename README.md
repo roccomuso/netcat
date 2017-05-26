@@ -95,7 +95,7 @@ The server will be kept alive and not being closed after the first connection. (
 
 The `exec()` method execute the given command and pipe together his `stdout` and `stderr` with the clients `socket`.
 
-#### Reverse Backdoor shell
+#### Reverse shell
 
 | Attacker              | Victim                           |
 |---------------------|------------------------------------|
@@ -103,14 +103,16 @@ The `exec()` method execute the given command and pipe together his `stdout` and
 
 #### Netcat as a proxy
 
-TODO...
+Netcat can be very easily configured as a proxy server:
 
-Netcat can be very easily configured as a proxy server.
+```javascript
+var nc = new NetcatServer()
+var nc2 = new NetcatClient()
+nc2.addr('google.com').port(80).connect()
+nc.port(8080).k().listen().proxy(nc2.stream())
+```
 
-| Server 1            | Server 2             | Client                 |
-|---------------------|----------------------|------------------------|
-|`nc2.port(2389).serve(Buffer.from('hi')).listen()`|`nc.port(2400).listen().serve().pipe(nc2)`|`inputStream.pipe(nc3.port(2400).connect().stream())`|
-
+All the traffic flowing on `localhost:8080` will be redirected to `google.com:80`.
 
 ## API
 
