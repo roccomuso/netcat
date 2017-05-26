@@ -342,3 +342,24 @@ test('Client exec()', function (t) {
   nc2.port(2401).exec(cmd).connect()
   t.equal(nc2._exec, cmd, 'exec set')
 })
+
+/*
+// Test client .retry(...)
+
+// Test proxy Server
+
+test('Proxy server', function (t) {
+  t.plan(5)
+  t.timeoutAfter(5000)
+
+  var nc = new NetcatServer()
+  var nc2 = new NetcatClient()
+
+  // Proxying SSH
+
+  nc2.addr('192.168.1.88').port(22).connect()
+  nc.port(8080).k().listen().proxy(nc2.stream())
+
+
+})
+*/
