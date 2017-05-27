@@ -9,10 +9,10 @@ This module implements all the basic netcat's features. To use as standalone too
 ## What you can do :computer:
 
 - [x] Backdoor (Reverse Shell)
-- [ ] Honeypot
+- [x] Honeypot
 - [x] File transfer
-- [ ] Port forwarding
-- [ ] Proxy
+- [x] Port forwarding
+- [x] Proxy
 - [x] Web Server
 - [ ] Port scanning
 
@@ -113,6 +113,25 @@ nc.port(8080).k().listen().proxy(nc2.stream())
 ```
 
 All the traffic flowing on `localhost:8080` will be redirected to `google.com:80`.
+Similarly you can setup a port forwarding using the same host.
+
+#### Honeypot
+
+Pretend to be an Apache server:
+
+```javascript
+var apache = `HTTP/1.1 200 OK
+Date: Sat, 27 May 2017 16:51:02 GMT
+Server: Apache/2.4.7 (Ubuntu)
+Cache-Control: public, max-age=0
+Content-Type: text/html; charset=utf-8
+Content-Length: 16894
+Vary: Accept-Encoding
+`
+var nc = new NetcatServer()
+var logFile = fs.createWriteStream('log.txt')
+nc.port(80).k().listen().serve(Buffer.from(apache)).pipe(logFile)
+```
 
 ## API
 
