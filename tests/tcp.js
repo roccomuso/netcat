@@ -343,23 +343,26 @@ test('Client exec()', function (t) {
   t.equal(nc2._exec, cmd, 'exec set')
 })
 
-/*
-// Test client .retry(...)
-
-// Test proxy Server
-
 test('Proxy server', function (t) {
-  t.plan(5)
+  t.plan(1)
   t.timeoutAfter(5000)
 
   var nc = new NetcatServer()
   var nc2 = new NetcatClient()
+  var srv = new NetcatServer()
+  var client = new NetcatClient()
 
-  // Proxying SSH
-
-  nc2.addr('192.168.1.88').port(22).connect()
+  // target server
+  srv.port(2222).serve(Buffer.from('Cool stuff')).listen()
+  // proxy server
+  nc2.addr('127.0.0.1').port(2222).connect()
   nc.port(8080).k().listen().proxy(nc2.stream())
-
-
+  // client
+  client.addr('127.0.0.1').port(8080).connect().on('data', function (d) {
+    t.equal(d.toString(), 'Cool stuff', 'got expected data from proxy server')
+    client.close()
+    nc.close()
+    nc2.close()
+    srv.close()
+  })
 })
-*/
