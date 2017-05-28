@@ -366,3 +366,28 @@ test('Proxy server', function (t) {
     srv.close()
   })
 })
+
+test('Port scan', function (t) {
+  t.plan(7)
+  t.timeoutAfter(5000)
+
+  // spawn a few servers
+  var nc = new NetcatServer().port(3001).listen()
+  var nc2 = new NetcatServer().port(3002).listen()
+  var nc3 = new NetcatServer().port(3003).listen()
+
+  // scan ports
+  var client = new NetcatClient()
+  client.tcp().addr('127.0.0.1').scan('3001-3006', function (ports) {
+    t.equal(Object.keys(ports).length, 6, 'got expected number of ports')
+    t.equal(ports['3001'], 'open', 'expect 3001 port to be open')
+    t.equal(ports['3002'], 'open', 'expect 3002 port to be open')
+    t.equal(ports['3003'], 'open', 'expect 3003 port to be open')
+    t.equal(ports['3004'], 'closed', 'expect 3004 port to be closed')
+    t.equal(ports['3005'], 'closed', 'expect 3005 port to be closed')
+    t.equal(ports['3006'], 'closed', 'expect 3006 port to be closed')
+    nc.close()
+    nc2.close()
+    nc3.close()
+  })
+})

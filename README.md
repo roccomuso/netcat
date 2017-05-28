@@ -133,6 +133,20 @@ var logFile = fs.createWriteStream('log.txt')
 nc.port(80).k().listen().serve(Buffer.from(apache)).pipe(logFile)
 ```
 
+#### Port scanning
+
+The netcat client provides also a basic port scan functionality.
+
+```javascript
+var nc = new NetcatClient()
+nc.addr('127.0.0.1').scan('22-80', function(ports){
+ // ports: { '22': 'open', '23': 'closed' ... }
+})
+```
+
+TCP protocol is used by default, if you wanna change the protocol use the `.udp()` method.
+`scan(...)` accepts also an array or a integer number.
+
 ## API
 
 #### `port(<port>)`
@@ -230,7 +244,8 @@ Coverage:
 - [x] serve can accepts both a string or a stream.
 - [x] `exec()` method
 - [ ] Hex dump
-- [ ] Backdoor shell
+- [x] Backdoor shell
+- [x] Proxy server
 - [ ] UDP.
 
 ## Known limitations
