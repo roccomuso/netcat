@@ -2,8 +2,6 @@
 
 > Netcat client and server modules written in pure Javascript for Node.js.
 
-**Under active development... stay out**
-
 This module implements all the basic netcat's features. To use as standalone tool install the [nc](https://github.com/roccomuso/nc) package.
 
 ## What you can do :computer:
@@ -14,7 +12,8 @@ This module implements all the basic netcat's features. To use as standalone too
 - [x] Port forwarding
 - [x] Proxy
 - [x] Web Server
-- [ ] Port scanning
+- [x] Port scanning
+- [ ] UDP
 
 | OS    |  Supported |
 |-------|--------------------|
@@ -37,16 +36,6 @@ const NetcatServer = require('netcat/server')
 const NetcatClient = require('netcat/client')
 const nc = new NetcatServer()
 const nc2 = new NetcatClient()
-```
-
-Available Options:
-
-```
-{
-  protocol: 'tcp',
-  address: '0.0.0.0',
-  port: null
-}
 ```
 
 ## Examples
@@ -243,7 +232,6 @@ Coverage:
 - [x] Tests the keepalive connection with `.pipe()` and `serve()`.
 - [x] serve can accepts both a string or a stream.
 - [x] `exec()` method
-- [ ] Hex dump
 - [x] Backdoor shell
 - [x] Proxy server
 - [ ] UDP.
