@@ -136,6 +136,20 @@ nc.addr('127.0.0.1').scan('22-80', function(ports){
 TCP protocol is used by default, if you wanna change the protocol use the `.udp()` method.
 `scan(...)` accepts also an array or a integer number.
 
+#### Connect to a UNIX sock file
+
+Both the Netcat server and client supports the UNIX socket conn.
+Let's use our Netcat client instance to connect to the Docker unix socket file and retrieve the list of our containers' images.
+
+```javascript
+nc2.unixSocket('/var/run/docker.sock').enc('utf8')
+  .on('data', function(res){
+    console.log(res)
+  })
+  .connect()
+  .send('GET /images/json HTTP/1.0\r\n\r\n')
+```
+
 ## API
 
 #### `port(<port>)`
@@ -143,6 +157,14 @@ TCP protocol is used by default, if you wanna change the protocol use the `.udp(
 Netcat can bind to any local port, subject to privilege restrictions and ports that are already in use.
 
 #### `listen()`
+
+#### `unixSocket(path)`
+
+Optionally you can provide the path to a unix sock file and listen/connect to it.
+
+#### `enc()`
+
+Set an encoding. The most common ones are: `utf8`, `ascii`, `base64`, `hex`, `binary`, `hex`.
 
 #### `keepalive()` or `k()`
 
@@ -212,9 +234,10 @@ Available options:
 - [ ] `-T tos               set Type Of Service`
 - [ ] `-t                   answer TELNET negotiation`
 - [ ] `-u                   UDP mode`
+- [x] `-U                   Listen or connect to a UNIX domain socket`
 - [x] `-v                   verbose`
 - [x] `-w secs              timeout for connects and final net reads (client-side)`
-- [ ] `-z                   zero-I/O mode [used for scanning]`
+- [x] `-z                   zero-I/O mode [used for scanning]`
 
 
 ## DEBUG
