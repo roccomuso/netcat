@@ -24,6 +24,8 @@ This module implements all the basic netcat's features. To use as standalone too
 ## Enhancement
 
 - [ ] Crypto
+- [ ] Authentication (`.auth('pass')`)
+- [ ] `allow` & `deny` specific remote IP-address.
 
 ## Install
 
