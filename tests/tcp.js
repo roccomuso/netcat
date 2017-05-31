@@ -122,7 +122,7 @@ test('TCP Client Server connection', function (t) {
   })
 
   nc2.addr('127.0.0.1').port(2391).connect(function () {
-    t.equal(this, nc2, 'Got client istance')
+    t.equal(this, nc2, 'Got client instance')
     console.log('Sending message')
     this.send('Hello World')
   })
@@ -135,7 +135,7 @@ test('TCP Client Server connection', function (t) {
 })
 
 test('Client: send raw buffer', function (t) {
-  t.plan(4)
+  t.plan(5)
   t.timeoutAfter(4000)
 
   var nc = new NetcatServer()
@@ -143,17 +143,68 @@ test('Client: send raw buffer', function (t) {
 
   nc.port(2391).listen().on('data', function (socket, data) {
     t.ok(socket.id, 'Socket got an ID assigned')
-    t.deepEqual(data, Buffer.from('hello world'), 'got expected Buffer')
+    t.ok(Buffer.isBuffer(data), 'got expected data type (Buffer)')
+    t.deepEqual(data, Buffer.from('hello world'), 'got expected data')
     close()
   })
 
   nc2.addr('127.0.0.1').port(2391).connect(function () {
-    t.equal(this, nc2, 'Got client istance')
+    t.equal(this, nc2, 'Got client instance')
     console.log('Sending Buffer')
     this.send(Buffer.from('hello world'))
   })
 
   function close () {
+    nc.close(function () {
+      t.ok(true, 'close server')
+    })
+  }
+})
+
+test('Test different data Encoding', function (t) {
+  t.plan(14)
+  t.timeoutAfter(4000)
+
+  var nc = new NetcatServer()
+  var nc2 = new NetcatClient()
+  var nc3 = new NetcatServer()
+  var nc4 = new NetcatClient()
+
+  // server utf8
+  nc.port(2387).enc('utf8').serve(Buffer.from('pong')).listen().on('data', function (socket, data) {
+    t.equal(socket.remoteAddress, '127.0.0.1', 'got exptected remote addr')
+    t.equal(typeof data, 'string', 'got expected data type (utf8)')
+    t.equal(data, 'hello world', 'got expected data')
+    close(nc)
+  })
+
+  // client Buffer
+  nc2.port(2387).connect(function () {
+    t.equal(this, nc2, 'Got client instance')
+    this.send(Buffer.from('hello world'))
+  }).on('data', function(d){
+    t.ok(Buffer.isBuffer(d), 'client: got exptected data type (Buffer)')
+    t.equal('pong', d.toString(), 'client: got exptected data')
+  })
+
+  // server hex
+  nc3.port(2388).enc('hex').serve(Buffer.from('foo')).listen().on('data', function (socket, data) {
+    t.equal(socket.remoteAddress, '127.0.0.1', 'got exptected remote addr')
+    t.equal(typeof data, 'string', 'got expected data type (hex)')
+    t.equal(data, Buffer.from('hello world').toString('hex'), 'got expected data')
+    close(nc3)
+  })
+
+  // client hex
+  nc4.port(2388).enc('hex').connect(function () {
+    t.equal(this, nc4, 'Got client instance')
+    this.send(Buffer.from('hello world'))
+  }).on('data', function(d){
+    t.equal(typeof d, 'string', 'client: got exptected data type (hex)')
+    t.equal(d, Buffer.from('foo').toString('hex'), 'client: got exptected data')
+  })
+
+  function close (nc) {
     nc.close(function () {
       t.ok(true, 'close server')
     })
@@ -226,7 +277,7 @@ test('Serving a file using keepalive to multiple clients', function (t) {
   }
 })
 
-test('Serving an istance of stream', function (t) {
+test('Serving an instance of stream', function (t) {
   t.plan(2)
   t.timeoutAfter(4000)
 
@@ -330,7 +381,7 @@ test('Client exec()', function (t) {
     socket.write('Hello World')
   })
   .once('data', function (sock, buf) { // one chunk
-    t.ok(sock, 'got socket istance')
+    t.ok(sock, 'got socket instance')
     t.equal(buf.toString(), 'Hello World', 'got expected stdout')
     nc.close()
   })
