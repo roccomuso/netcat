@@ -1,11 +1,22 @@
-# netcat [![NPM Version](https://img.shields.io/npm/v/netcat.svg)](https://www.npmjs.com/package/netcat) [![Build Status](https://travis-ci.org/roccomuso/netcat.svg?branch=master)](https://travis-ci.org/roccomuso/netcat) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+# netcat
+
+[![NPM Version](https://img.shields.io/npm/v/netcat.svg)](https://www.npmjs.com/package/netcat)
+![node](https://img.shields.io/node/v/netcat.svg)
+[![Build Status](https://travis-ci.org/roccomuso/netcat.svg?branch=master)](https://travis-ci.org/roccomuso/netcat)
+[![Dependency Status](https://david-dm.org/roccomuso/netcat.png)](https://david-dm.org/roccomuso/netcat)
+[![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
 > Netcat client and server modules written in pure Javascript for Node.js.
 
 This module implements all the basic netcat's features. To use as standalone tool install the [nc](https://github.com/roccomuso/nc) package.
 
+| Linux | Mac OS | Windows |
+|-------|--------|---------|
+| :white_check_mark: | :white_check_mark: | :white_check_mark: |
+
 ## What you can do :computer:
 
+- [ ] TCP & UDP
 - [x] Backdoor (Reverse Shell)
 - [x] Honeypot
 - [x] File transfer
@@ -13,19 +24,13 @@ This module implements all the basic netcat's features. To use as standalone too
 - [x] Proxy
 - [x] Web Server
 - [x] Port scanning
-- [ ] UDP
-
-| OS    |  Supported |
-|-------|--------------------|
-| Linux | :white_check_mark: |
-| Mac OS | :white_check_mark: |
-| Windows | :white_check_mark: |
 
 ## Enhancement
 
-- [ ] Crypto
-- [ ] Authentication (`.auth('pass')`)
+- [ ] Crypto.
+- [ ] Authentication (`.auth('pass')`).
 - [ ] `allow` & `deny` specific remote IP-address.
+- [ ] Follow HTTP redirects.
 
 ## Install
 
