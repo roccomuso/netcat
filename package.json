@@ -10,6 +10,7 @@
     "type": "git",
     "url": "git+https://github.com/roccomuso/netcat.git"
   },
+  "engines" : { "node" : ">=6.0.0" },
   "keywords": [
     "netcat",
     "nc",

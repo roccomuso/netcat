@@ -30,7 +30,6 @@ This module implements all the basic netcat's features. To use as standalone too
 - [ ] Crypto.
 - [ ] Authentication (`.auth('pass')`).
 - [ ] `allow` & `deny` specific remote IP-address.
-- [ ] Follow HTTP redirects.
 
 ## Install
 
