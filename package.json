@@ -4,7 +4,9 @@
   "description": "Netcat client and server modules written in pure Javascript for Node.js",
   "main": "index.js",
   "scripts": {
-    "test": "tape ./tests/**/*.js | node_modules/.bin/tap-spec && standard && nsp check"
+    "test": "tape ./tests/**/*.js | tap-spec && standard && nsp check",
+    "tcp": "tape ./tests/tcp.js | tap-spec",
+    "udp": "tape ./tests/udp.js | tap-spec"
   },
   "repository": {
     "type": "git",
