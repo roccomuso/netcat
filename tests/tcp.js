@@ -182,7 +182,7 @@ test('Test different data Encoding', function (t) {
   nc2.port(2387).connect(function () {
     t.equal(this, nc2, 'Got client instance')
     this.send(Buffer.from('hello world'))
-  }).on('data', function(d){
+  }).on('data', function (d) {
     t.ok(Buffer.isBuffer(d), 'client: got exptected data type (Buffer)')
     t.equal('pong', d.toString(), 'client: got exptected data')
   })
@@ -199,7 +199,7 @@ test('Test different data Encoding', function (t) {
   nc4.port(2388).enc('hex').connect(function () {
     t.equal(this, nc4, 'Got client instance')
     this.send(Buffer.from('hello world'))
-  }).on('data', function(d){
+  }).on('data', function (d) {
     t.equal(typeof d, 'string', 'client: got exptected data type (hex)')
     t.equal(d, Buffer.from('foo').toString('hex'), 'client: got exptected data')
   })
