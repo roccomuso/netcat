@@ -164,7 +164,7 @@ Netcat can bind to any local port, subject to privilege restrictions and ports t
 
 #### `listen()`
 
-#### `unixSocket(path)`
+#### `unixSocket(path)` (TCP only)
 
 Optionally you can provide the path to a unix sock file and listen/connect to it.
 
@@ -175,6 +175,8 @@ Set an encoding. The most common ones are: `utf8`, `ascii`, `base64`, `hex`, `bi
 #### `keepalive()` or `k()`
 
 When you set the keepalive, the server will stay up and possibly the outStream given to `pipe(outStream)` kept open.
+
+By default in UDP mode the listen is kept alive until an explicit `nc.close()`.
 
 #### `serve()`
 
