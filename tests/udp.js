@@ -121,18 +121,26 @@ test('Server listen and client send packets', function (t) {
   nc2.udp().port(2100).init().send('hello', '127.0.0.1')
 })
 
-/*
-
 test('Client rx encoding utf8', function (t) {
-  t.plan(3)
+  t.plan(4)
   t.timeoutAfter(3000)
 
   var nc = new NetcatServer()
   t.equal(nc._encoding, null, 'no encoding by default')
 
-  // TODO
+  nc.udp().enc('utf8').port(2101).listen().on('data', function (rinfo, data) {
+    t.equal(nc._encoding, 'utf8', 'expected encoding set')
+    t.equal(typeof data, 'string', 'got expected data type')
+    t.equal(data, 'hello', 'got expected data')
+    nc.close()
+    nc2.close()
+  })
 
+  var nc2 = new NetcatClient()
+  nc2.udp().port(2101).init().send('hello', '127.0.0.1')
 })
+
+/*
 
 test('Send packet with loopback', function (t) {
   // TODO
