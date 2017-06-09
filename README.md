@@ -244,7 +244,7 @@ Available options:
 - [ ] `-u                   UDP mode`
 - [x] `-U                   Listen or connect to a UNIX domain socket`
 - [x] `-v                   verbose`
-- [x] `-w secs              timeout for connects and final net reads (client-side)`
+- [x] `-w secs              timeout for connects and final net reads (UDP-only)`
 - [x] `-z                   zero-I/O mode [used for scanning]`
 
 
