@@ -185,7 +185,7 @@ test('Send a broadcast packet', function (t) {
 
 test('Transfer a file (stream)', function (t) {
   t.plan(2)
-  //t.timeoutAfter(4000)
+  t.timeoutAfter(5000)
 
   var nc = new NetcatServer()
   var testFile = path.join(__dirname, 'udp.js')
@@ -193,12 +193,10 @@ test('Transfer a file (stream)', function (t) {
 
   var concatStream = concat(function (file) {
     t.equal(file.toString(), inputFile.toString(), 'server got expected file')
-    nc.close()
-    nc2.close()
   })
 
-  // TODO: add watchTime to close after X sec of inactivity since the last msg
-  nc.udp().port(2103).listen().pipe(concatStream)
+  // waitTime to close after 1 sec of inactivity since the last msg
+  nc.udp().port(2103).wait(1000).listen().pipe(concatStream)
   .on('srvClose', function () {
     t.ok(true, 'server closed event')
   })
@@ -206,7 +204,6 @@ test('Transfer a file (stream)', function (t) {
   var nc2 = new NetcatClient()
   nc2.udp().destination('127.0.0.1').port(2103).init()
   fs.createReadStream(testFile).pipe(nc2.stream())
-
 
 })
 
