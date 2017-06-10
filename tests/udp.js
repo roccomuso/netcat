@@ -1,12 +1,15 @@
 'use strict'
 
+const fs = require('fs')
+const path = require('path')
+const concat = require('concat-stream')
 const test = require('tape')
 const Netcat = require('../')
 const NetcatServer = Netcat.server
 const NetcatClient = Netcat.client
 
 test('UDP Server basic methods', function (t) {
-  t.plan(7)
+  t.plan(9)
 
   var nc = new NetcatServer()
   t.equal(nc._protocol, 'tcp', 'protocol is tcp by default')
@@ -24,6 +27,20 @@ test('UDP Server basic methods', function (t) {
     t.fail('cannot call udp-only methods in tcp mode')
   } catch (e) {
     t.ok(e, 'loopback() is udp only')
+  }
+
+  try {
+    nc.waitTime(1000)
+    t.fail('cannot call udp-only methods in tcp mode')
+  } catch (e) {
+    t.ok(e, 'waitTime() is udp only')
+  }
+
+  try {
+    nc.broadcast()
+    t.fail('cannot call udp-only methods in tcp mode')
+  } catch (e) {
+    t.ok(e, 'broadcast() is udp only')
   }
 
   nc.udp()
@@ -52,7 +69,7 @@ test('UDP Server basic methods', function (t) {
 })
 
 test('Client basic methods', function (t) {
-  t.plan(8)
+  t.plan(9)
 
   var nc = new NetcatClient()
   t.equal(nc._protocol, 'tcp', 'protocol is tcp by default')
@@ -70,6 +87,13 @@ test('Client basic methods', function (t) {
     t.fail('cannot call udp-only methods in tcp mode')
   } catch (e) {
     t.ok(e, 'loopback() is udp only')
+  }
+
+  try {
+    nc.destination()
+    t.fail('cannot call udp-only methods in tcp mode')
+  } catch (e) {
+    t.ok(e, 'destination() is udp only')
   }
 
   nc.udp()
@@ -157,9 +181,42 @@ test('Send a broadcast packet', function (t) {
 
 })
 
+*/
+
 test('Transfer a file (stream)', function (t) {
-  // TODO
+  t.plan(2)
+  //t.timeoutAfter(4000)
+
+  var nc = new NetcatServer()
+  var testFile = path.join(__dirname, 'udp.js')
+  var inputFile = fs.readFileSync(testFile)
+
+  var concatStream = concat(function (file) {
+    t.equal(file.toString(), inputFile.toString(), 'server got expected file')
+    nc.close()
+    nc2.close()
+  })
+
+  // TODO: add watchTime to close after X sec of inactivity since the last msg
+  nc.udp().port(2103).listen().pipe(concatStream)
+  .on('srvClose', function () {
+    t.ok(true, 'server closed event')
+  })
+
+  var nc2 = new NetcatClient()
+  nc2.udp().destination('127.0.0.1').port(2103).init()
+  fs.createReadStream(testFile).pipe(nc2.stream())
+
 
 })
+
+/*
+// TODO
+
+test('waitTime() server-side and client-side', function (t) {
+  // TODO:
+
+})
+
 
 */
