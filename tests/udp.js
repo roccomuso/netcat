@@ -145,7 +145,7 @@ test('Server listen and client send packets', function (t) {
   nc2.udp().port(2100).init().send('hello', '127.0.0.1')
 })
 
-test('Client rx encoding utf8', function (t) {
+test('Server rx encoding utf8', function (t) {
   t.plan(4)
   t.timeoutAfter(3000)
 
@@ -153,9 +153,9 @@ test('Client rx encoding utf8', function (t) {
   t.equal(nc._encoding, null, 'no encoding by default')
 
   nc.udp().enc('utf8').port(2101).listen().on('data', function (rinfo, data) {
-    t.equal(nc._encoding, 'utf8', 'expected encoding set')
+    t.equal(nc._encoding, 'utf8', 'server got expected encoding set')
     t.equal(typeof data, 'string', 'got expected data type')
-    t.equal(data, 'hello', 'got expected data')
+    t.equal(data, 'hello', 'server got expected data')
     nc.close()
     nc2.close()
   })
@@ -164,24 +164,25 @@ test('Client rx encoding utf8', function (t) {
   nc2.udp().port(2101).init().send('hello', '127.0.0.1')
 })
 
-/*
+test('Server sending a packet with loopback', function (t) {
+  t.plan(4)
+  t.timeoutAfter(3000)
 
-test('Send packet with loopback', function (t) {
-  // TODO
+  var nc = new NetcatServer()
+  t.equal(nc._loopback, false, 'no loopback by default')
+  nc.udp().port(2103).serve(Buffer.from('hello myself')).on('data', function(rinfo, msg){
+    t.fail('got unexpected msg')
+  }).listen()
+
+  var nc2 = new NetcatServer()
+  nc2.udp().port(2104).loopback().wait(1000).serve(Buffer.from('hello myself')).on('data', function(rinfo, msg){
+    t.equal(nc2._loopback, true, 'loopback is true')
+    t.ok(rinfo.loopback, 'got loopback msg')
+    t.equal(msg.toString(), 'hello myself', 'got expected loopback msg')
+    nc.close()
+  }).listen()
 
 })
-
-test('Send a broadcast packet', function (t) {
-  // TODO
-
-  var nc2 = new NetcatClient()
-  nc2.udp().port(2103).init().on('ready', function(){
-    nc2.send('hello world', '127.0.0.1')
-  })
-
-})
-
-*/
 
 test('Transfer a file (stream)', function (t) {
   t.plan(2)
@@ -196,24 +197,27 @@ test('Transfer a file (stream)', function (t) {
   })
 
   // waitTime to close after 1 sec of inactivity since the last msg
-  nc.udp().port(2103).wait(1000).listen().pipe(concatStream)
+  nc.udp().port(2105).wait(1000).listen().pipe(concatStream)
   .on('srvClose', function () {
     t.ok(true, 'server closed event')
+    nc2.close()
   })
 
   var nc2 = new NetcatClient()
-  nc2.udp().destination('127.0.0.1').port(2103).init()
+  nc2.udp().destination('127.0.0.1').port(2105).init()
   fs.createReadStream(testFile).pipe(nc2.stream())
 
 })
 
 /*
-// TODO
+test('Send a broadcast packet', function (t) {
+  // TODO
 
-test('waitTime() server-side and client-side', function (t) {
-  // TODO:
+  var nc2 = new NetcatClient()
+  nc2.udp().port(2106).init().on('ready', function(){
+    nc2.send('hello world', '127.0.0.1')
+  })
 
 })
-
 
 */
