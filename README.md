@@ -226,7 +226,7 @@ Available options:
 
 - [x] `-c shell commands    as '-e'; use /bin/sh to exec [dangerous!!]`
 - [x] `-e filename          program to exec after connect [dangerous!!]`
-- [ ] `-b                   allow broadcasts`
+- [x] `-b                   allow broadcasts`
 - [ ] `-g gateway           source-routing hop point[s], up to 8`
 - [ ] `-G num               source-routing pointer: 4, 8, 12`
 - [x] `-i secs              delay interval for lines sent, ports scanned (client-side)`
@@ -241,7 +241,7 @@ Available options:
 - [x] `-s addr              local source address`
 - [ ] `-T tos               set Type Of Service`
 - [ ] `-t                   answer TELNET negotiation`
-- [ ] `-u                   UDP mode`
+- [x] `-u                   UDP mode`
 - [x] `-U                   Listen or connect to a UNIX domain socket`
 - [x] `-v                   verbose`
 - [x] `-w secs              timeout for connects and final net reads (UDP-only)`
