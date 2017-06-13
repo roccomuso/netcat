@@ -86,7 +86,7 @@ The server will be kept alive and not being closed after the first connection. (
 
 | Server              | Client                             |
 |---------------------|------------------------------------|
-|`nc.port(2389).listen().exec('/bin/bash')`|`process.stdin .pipe(nc2.addr('127.0.0.1').port(2389).connect().pipe(process.stdout).stream())`|
+|`nc.port(2389).listen().exec('/bin/bash')`|`process.stdin.pipe( nc2.addr('127.0.0.1').port(2389).connect().pipe(process.stdout).stream() )`|
 
 The `exec()` method execute the given command and pipe together his `stdout` and `stderr` with the clients `socket`.
 
@@ -139,8 +139,7 @@ nc.addr('127.0.0.1').scan('22-80', function(ports){
 })
 ```
 
-TCP protocol is used by default, if you wanna change the protocol use the `.udp()` method.
-`scan(...)` accepts also an array or a integer number.
+The port scanner is TCP protocol only. The UDP scan is not [really effective](https://en.wikipedia.org/wiki/Port_scanner#UDP_scanning). `scan(...)` accepts also an array or a integer number.
 
 #### Connect to a UNIX sock file
 
@@ -194,6 +193,11 @@ nc.p(2389).exec('base64', ['-d']).listen()
 // OR
 nc.p(2389).exec('base64 | grep hello').listen()
 ```
+
+#### `bind(<port>)`
+
+UDP-only method.
+Let the UDP client/server listen on the given port. It will also be used as outgoing port if `.port(<n>)` wasn't called.
 
 ## Events
 
