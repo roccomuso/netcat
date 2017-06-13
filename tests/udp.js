@@ -209,15 +209,38 @@ test('Transfer a file (stream)', function (t) {
 
 })
 
-/*
-test('Send a broadcast packet', function (t) {
-  // TODO
+test('Bridge: TCP -> UDP', function (t) {
+  var NetcatServer = require('./server')
+  var NetcatClient = require('./client')
 
-  var nc2 = new NetcatClient()
-  nc2.udp().port(2106).init().on('ready', function(){
-    nc2.send('hello world', '127.0.0.1')
-  })
+  var nc2 = new NetcatServer()
+  nc2.udp().destination('127.0.0.1').bind(2107).port(2108).listen()
+
+  var nc3 = new NetcatServer()
+  nc3.udp().destination('127.0.0.1').bind(2108).on('data', function(){
+    // TODO: send a msg on 2107 that should appear on tcp
+
+  }).listen()
+
+  var nc = new NetcatServer()
+  nc.k().port(2100).proxy(nc2.server).on('data', function(sock, msg){
+    console.log(msg)
+    // TODO check msg
+  }).listen()
 
 })
+
+/*
+
+// TODO: UDP -> TCP Bridge
+
+
+test('UDP output hex dump', function (t) {
+  // TODO: output to a stream
+
+})
+
+// TODO: udp proxy (different port)
+
 
 */
