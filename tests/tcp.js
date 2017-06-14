@@ -141,14 +141,14 @@ test('Client: send raw buffer', function (t) {
   var nc = new NetcatServer()
   var nc2 = new NetcatClient()
 
-  nc.port(2391).listen().on('data', function (socket, data) {
+  nc.port(2291).listen().on('data', function (socket, data) {
     t.ok(socket.id, 'Socket got an ID assigned')
     t.ok(Buffer.isBuffer(data), 'got expected data type (Buffer)')
     t.deepEqual(data, Buffer.from('hello world'), 'got expected data')
     close()
   })
 
-  nc2.addr('127.0.0.1').port(2391).connect(function () {
+  nc2.addr('127.0.0.1').port(2291).connect(function () {
     t.equal(this, nc2, 'Got client instance')
     console.log('Sending Buffer')
     this.send(Buffer.from('hello world'))
@@ -223,12 +223,12 @@ test('Transfer a file (stream)', function (t) {
     t.equal(file.toString(), inputFile.toString(), 'server got expected file')
   })
 
-  nc.port(2391).listen().pipe(concatStream).on('srvClose', function () {
+  nc.port(2191).listen().pipe(concatStream).on('srvClose', function () {
     t.ok(true, 'server closed (no keepalive)')
   })
 
   var nc2 = new NetcatClient()
-  fs.createReadStream(testFile).pipe(nc2.addr('127.0.0.1').port(2391).connect().stream())
+  fs.createReadStream(testFile).pipe(nc2.addr('127.0.0.1').port(2191).connect().stream())
 })
 
 test('Serving a file with serve()', function (t) {
