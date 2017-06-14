@@ -207,13 +207,12 @@ test('Transfer a file (stream)', function (t) {
   fs.createReadStream(testFile).pipe(nc2.stream())
 })
 
-
 test('Server: listen and sending on different ports', function (t) {
   t.timeoutAfter(5000)
   t.plan(7)
 
   var nc2 = new NetcatServer()
-  nc2.udp().enc('utf8').bind(2107).port(2108).on('data', function(rinfo, msg){
+  nc2.udp().enc('utf8').bind(2107).port(2108).on('data', function (rinfo, msg) {
     t.equal(rinfo.port, 2108, 'got exptected inc. port')
     t.equal(typeof msg, 'string', 'got expected data type')
     t.equal(msg, 'ping', 'got expected data')
@@ -221,19 +220,17 @@ test('Server: listen and sending on different ports', function (t) {
   }).listen() // listen on 2107 and send on 2108
 
   var nc3 = new NetcatServer()
-  nc3.udp().bind(2108).port(2107).on('data', function(rinfo, msg){
+  nc3.udp().bind(2108).port(2107).on('data', function (rinfo, msg) {
     t.equal(rinfo.port, 2107, 'got exptected inc. port')
     t.ok(Buffer.isBuffer(msg), 'got expected data type')
     t.equal(msg.toString(), 'pong', 'got response data')
     nc3.close()
     nc2.close()
-  }).on('ready', function(){
+  }).on('ready', function () {
     nc3.send('ping')
     t.ok(true, 'ready event fired')
   }).listen() // listen on 2108 and send on 2107
-
 })
-
 
 test('Bridge: TCP -> UDP', function (t) {
   t.plan(7)
@@ -258,16 +255,15 @@ test('Bridge: TCP -> UDP', function (t) {
     t.equal(msg.toString(), 'ping', 'TCP got expected ping')
   }).listen()
 
-setTimeout(function(){
-  var nc4 = new NetcatClient()
-  nc4.port(2100).connect().send(Buffer.from('ping')).on('data', function (msg) {
-    t.ok(Buffer.isBuffer(msg), 'got expected data type')
-    t.equal(msg.toString(), 'pong', 'TCP got expected pong')
-    nc4.close()
-    nc.close()
-  })
-}, 1500)
-
+  setTimeout(function () {
+    var nc4 = new NetcatClient()
+    nc4.port(2100).connect().send(Buffer.from('ping')).on('data', function (msg) {
+      t.ok(Buffer.isBuffer(msg), 'got expected data type')
+      t.equal(msg.toString(), 'pong', 'TCP got expected pong')
+      nc4.close()
+      nc.close()
+    })
+  }, 1500)
 })
 
 /*
