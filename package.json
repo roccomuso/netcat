@@ -12,7 +12,9 @@
     "type": "git",
     "url": "git+https://github.com/roccomuso/netcat.git"
   },
-  "engines" : { "node" : ">=6.0.0" },
+  "engines": {
+    "node": ">=6.0.0"
+  },
   "keywords": [
     "netcat",
     "nc",
@@ -40,6 +42,7 @@
   },
   "dependencies": {
     "async": "^2.4.1",
+    "datagram-stream": "^1.1.1",
     "debug": "^2.6.6",
     "shortid": "^2.2.8",
     "through2": "^2.0.3"
