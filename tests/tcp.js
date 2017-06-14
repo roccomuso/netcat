@@ -286,7 +286,7 @@ test('Serving an instance of stream', function (t) {
   var inputStream = fs.createReadStream(testFile)
 
   var nc = new NetcatServer()
-  nc.port(2392).listen().serve(inputStream).on('srvClose', function () {
+  nc.port(2492).listen().serve(inputStream).on('srvClose', function () {
     t.ok(true, 'server closed (no keepalive)')
   })
 
@@ -295,7 +295,7 @@ test('Serving an instance of stream', function (t) {
   })
 
   var nc2 = new NetcatClient()
-  nc2.addr('127.0.0.1').port(2392).connect().pipe(concatStream)
+  nc2.addr('127.0.0.1').port(2492).connect().pipe(concatStream)
 })
 
 test('Serving a stream using keepalive to multiple clients', function (t) {
@@ -330,7 +330,7 @@ test('Serving a raw Buffer', function (t) {
   t.timeoutAfter(4000)
 
   var nc = new NetcatServer()
-  nc.port(2392).listen().serve(Buffer.from('Hello World')).on('srvClose', function () {
+  nc.port(2592).listen().serve(Buffer.from('Hello World')).on('srvClose', function () {
     t.ok(true, 'server closed (no keepalive)')
   })
 
@@ -339,7 +339,7 @@ test('Serving a raw Buffer', function (t) {
   })
 
   var nc2 = new NetcatClient()
-  nc2.addr('127.0.0.1').port(2392).connect().pipe(concatStream)
+  nc2.addr('127.0.0.1').port(2592).connect().pipe(concatStream)
 })
 
 test('Server exec()', function (t) {
