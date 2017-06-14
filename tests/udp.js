@@ -209,62 +209,68 @@ test('Transfer a file (stream)', function (t) {
 
 
 test('Server: listen and sending on different ports', function (t) {
+  t.timeoutAfter(5000)
+  t.plan(7)
 
   var nc2 = new NetcatServer()
-  nc2.udp().bind(2107).port(2108).on('data', function(rinfo, msg){
-    console.log('nc2', msg)
+  nc2.udp().enc('utf8').bind(2107).port(2108).on('data', function(rinfo, msg){
+    t.equal(rinfo.port, 2108, 'got exptected inc. port')
+    t.equal(typeof msg, 'string', 'got expected data type')
+    t.equal(msg, 'ping', 'got expected data')
     nc2.send('pong')
-    // BUG: it does gets the msg from an external nc.
-    // BUG: doesn't get the msg fron the netcat code below.
-    // BUG: could be a send issue... but it sends stuff to an external netcat!!
-    // BUG: the same for the NetcatClient with the bind option
   }).listen() // listen on 2107 and send on 2108
 
   var nc3 = new NetcatServer()
   nc3.udp().bind(2108).port(2107).on('data', function(rinfo, msg){
-    console.log('nc3:', msg)
-    // BUG: same as above
+    t.equal(rinfo.port, 2107, 'got exptected inc. port')
+    t.ok(Buffer.isBuffer(msg), 'got expected data type')
+    t.equal(msg.toString(), 'pong', 'got response data')
+    nc3.close()
+    nc2.close()
   }).on('ready', function(){
     nc3.send('ping')
+    t.ok(true, 'ready event fired')
   }).listen() // listen on 2108 and send on 2107
-
 
 })
 
-/*
+
 test('Bridge: TCP -> UDP', function (t) {
-  t.plan(2)
+  t.plan(7)
   t.timeoutAfter(5000)
 
+  // nc4 (tcp-client) <-> nc (tcp-server|udp-bridge) <-> nc2 (udp-server) <-> nc3 (udp-server)
+
   var nc2 = new NetcatServer()
-  nc2.udp().bind(2107).port(2108).listen()
-  // BUG: same as above nc2 -> nc3
+  nc2.udp().wait(1000).bind(2107).port(2108).listen()
 
   var nc3 = new NetcatServer()
-  nc3.udp().bind(2108).port(2107).on('data', function () {
-    // TODO: send a msg on 2107 that should appear on tcp
-    console.log('invio pong')
+  nc3.udp().wait(1000).bind(2108).port(2107).on('data', function (rinfo, msg) {
+    t.equal(rinfo.port, 2107, 'got exptected inc. port')
+    t.ok(Buffer.isBuffer(msg), 'got expected data type')
+    t.equal(msg.toString(), 'ping', 'UDP got expected ping')
     nc3.send('pong')
   }).listen()
 
   var nc = new NetcatServer()
   nc.k().port(2100).proxy(nc2.server).on('data', function (sock, msg) {
-    console.log('arriva ping ok', msg)
-    // TODO check msg
+    t.ok(Buffer.isBuffer(msg), 'got expected data type')
+    t.equal(msg.toString(), 'ping', 'TCP got expected ping')
   }).listen()
 
 setTimeout(function(){
   var nc4 = new NetcatClient()
   nc4.port(2100).connect().send(Buffer.from('ping')).on('data', function (msg) {
-    console.log('arriva pong?', msg)
-    // TODO check msg
+    t.ok(Buffer.isBuffer(msg), 'got expected data type')
+    t.equal(msg.toString(), 'pong', 'TCP got expected pong')
+    nc4.close()
+    nc.close()
   })
 }, 1500)
 
 })
 
-
-// TODO: UDP -> TCP Bridge
+/*
 
 test('UDP output hex dump', function (t) {
   // TODO: output to a stream
