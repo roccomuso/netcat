@@ -223,7 +223,7 @@ test('Transfer a file (stream)', function (t) {
     t.equal(file.toString(), inputFile.toString(), 'server got expected file')
   })
 
-  nc.port(2191).listen().pipe(concatStream).on('srvClose', function () {
+  nc.port(2191).listen().pipe(concatStream).on('close', function () {
     t.ok(true, 'server closed (no keepalive)')
   })
 
@@ -239,7 +239,7 @@ test('Serving a file with serve()', function (t) {
   var inputFile = fs.readFileSync(testFile)
 
   var nc = new NetcatServer()
-  nc.port(2392).listen().serve(testFile).on('srvClose', function () {
+  nc.port(2392).listen().serve(testFile).on('close', function () {
     t.ok(true, 'server closed (no keepalive)')
   })
 
@@ -286,7 +286,7 @@ test('Serving an instance of stream', function (t) {
   var inputStream = fs.createReadStream(testFile)
 
   var nc = new NetcatServer()
-  nc.port(2492).listen().serve(inputStream).on('srvClose', function () {
+  nc.port(2492).listen().serve(inputStream).on('close', function () {
     t.ok(true, 'server closed (no keepalive)')
   })
 
@@ -300,7 +300,7 @@ test('Serving an instance of stream', function (t) {
 
 test('Serving a stream using keepalive to multiple clients', function (t) {
   var nClients = 10 // 10 clients
-  t.plan(nClients + 1)
+  t.plan(nClients * 2 + 1)
   t.timeoutAfter(5000)
   var k = 0
 
@@ -309,7 +309,9 @@ test('Serving a stream using keepalive to multiple clients', function (t) {
   var inputStream = fs.createReadStream(testFile)
 
   var nc = new NetcatServer()
-  nc.port(2394).k().listen().serve(inputStream)
+  nc.port(2394).k().listen().serve(inputStream).on('clientClose', function (socket) {
+    t.ok(socket, 'socket client close event catched')
+  })
 
   var NCs = {}
   for (var i = 0; i < nClients; i++) {
@@ -330,7 +332,7 @@ test('Serving a raw Buffer', function (t) {
   t.timeoutAfter(4000)
 
   var nc = new NetcatServer()
-  nc.port(2592).listen().serve(Buffer.from('Hello World')).on('srvClose', function () {
+  nc.port(2592).listen().serve(Buffer.from('Hello World')).on('close', function () {
     t.ok(true, 'server closed (no keepalive)')
   })
 
@@ -351,7 +353,7 @@ test('Server exec()', function (t) {
   var nc = new NetcatServer()
   nc.port(2400).listen()
   .exec(cmd)
-  .on('srvClose', function () {
+  .on('close', function () {
     t.ok(true, 'server closed (no keepalive)')
   })
   t.equal(nc._exec, cmd, 'spawning process')
@@ -385,7 +387,7 @@ test('Client exec()', function (t) {
     t.equal(buf.toString(), 'Hello World', 'got expected stdout')
     nc.close()
   })
-  .once('srvClose', function () {
+  .once('close', function () {
     t.ok(true, 'server closed (no keepalive)')
   })
 

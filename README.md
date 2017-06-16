@@ -329,6 +329,16 @@ function onData (socket, chunk) {
 }
 ```
 
+#### `.on('close', cb)`
+
+Emitted when the server close.
+
+#### `.on('clientClose', cb)` - TCP server
+
+Called when a client disconnects from the server.
+The callback accepts as 1th param the `socket` instance just disconnected and a bool val `hadError`.
+
+
 ## CLI usage
 
 For the standalone usage install the `nc` CLI package:

@@ -9,7 +9,7 @@ const NetcatServer = Netcat.server
 const NetcatClient = Netcat.client
 
 test('UDP Server basic methods', function (t) {
-  t.plan(9)
+  t.plan(8)
 
   var nc = new NetcatServer()
   t.equal(nc._protocol, 'tcp', 'protocol is tcp by default')
@@ -27,13 +27,6 @@ test('UDP Server basic methods', function (t) {
     t.fail('cannot call udp-only methods in tcp mode')
   } catch (e) {
     t.ok(e, 'loopback() is udp only')
-  }
-
-  try {
-    nc.waitTime(1000)
-    t.fail('cannot call udp-only methods in tcp mode')
-  } catch (e) {
-    t.ok(e, 'waitTime() is udp only')
   }
 
   try {
@@ -129,20 +122,23 @@ test('Client basic methods', function (t) {
 })
 
 test('Server listen and client send packets', function (t) {
-  t.plan(3)
+  t.plan(5)
   t.timeoutAfter(5000)
 
   var nc = new NetcatServer()
   nc.udp().port(2100).listen().on('data', function (rinfo, data) {
-    t.equal(rinfo.family, 'IPv4', 'Got expected IP version')
+    t.equal(rinfo.family, 'IPv4', 'got expected IP version')
     t.ok(Buffer.isBuffer(data), 'got expected data type')
     t.equal(data.toString(), 'hello', 'got expected data')
     nc.close()
-    nc2.close()
+  }).on('close', function () {
+    t.ok(true, 'server got expected close event')
   })
 
   var nc2 = new NetcatClient()
-  nc2.udp().port(2100).init().send('hello', '127.0.0.1')
+  nc2.udp().port(2100).wait(1000).init().send('hello', '127.0.0.1').on('close', function () {
+    t.ok(true, 'client got expected close event')
+  })
 })
 
 test('Server rx encoding utf8', function (t) {
@@ -197,7 +193,7 @@ test('Transfer a file (stream)', function (t) {
 
   // waitTime to close after 1 sec of inactivity since the last msg
   nc.udp().port(2105).wait(1000).listen().pipe(concatStream)
-  .on('srvClose', function () {
+  .on('close', function () {
     t.ok(true, 'server closed event')
     nc2.close()
   })
