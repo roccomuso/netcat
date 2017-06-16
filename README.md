@@ -338,6 +338,9 @@ Emitted when the server close.
 Called when a client disconnects from the server.
 The callback accepts as 1th param the `socket` instance just disconnected and a bool val `hadError`.
 
+#### `.on('waitTimeout', cb)`
+
+Fired when the client/server remains inactive for a specified `wait(ms)` time.
 
 ## CLI usage
 

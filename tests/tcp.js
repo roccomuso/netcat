@@ -344,6 +344,56 @@ test('Serving a raw Buffer', function (t) {
   nc2.addr('127.0.0.1').port(2592).connect().pipe(concatStream)
 })
 
+test('Server waitTime parameter', function (t) {
+  t.plan(6)
+  t.timeoutAfter(4000)
+
+  var nc = new NetcatServer()
+  nc.port(2593).k().wait(1000).listen().serve(Buffer.from('Hello World')).on('waitTimeout', function () {
+    t.ok(true, 'server closed (by waitTime)')
+  }).on('close', function () {
+    t.ok(true, 'server got close event')
+  }).on('data', function (sock, buf) {
+    t.ok(sock, 'got socket instance')
+    t.equal(buf.toString(), 'yoyo', 'got expected data from client')
+  })
+
+  var nc2 = new NetcatClient()
+  nc2.addr('127.0.0.1').port(2593).connect().send('yoyo').on('data', function (d) {
+    t.equal(d.toString(), 'Hello World', 'got expected data from server')
+  }).on('close', function () {
+    t.ok(true, 'client got close event (because server closed)')
+  })
+
+})
+
+test('Client waitTime parameter', function (t) {
+  t.plan(6)
+  t.timeoutAfter(4000)
+
+  var nc = new NetcatServer()
+  nc.port(2594).k().listen().serve(Buffer.from('Hello World')).on('waitTimeout', function () {
+    t.fail('server should not be closed by waitTime')
+  }).on('close', function () {
+    t.ok(true, 'server got close event')
+  }).on('data', function (sock, buf) {
+    t.ok(sock, 'got socket instance')
+    t.equal(buf.toString(), 'yoyo', 'got expected data from client')
+  })
+
+  // client close after 2 sec of inactivity
+  var nc2 = new NetcatClient()
+  nc2.addr('127.0.0.1').wait(2000).port(2594).connect().send('yoyo').on('data', function (d) {
+    t.equal(d.toString(), 'Hello World', 'got expected data from server')
+  }).on('waitTimeout', function () {
+    t.ok(true, 'client closed (by waitTime)')
+    nc.close()
+  }).on('close', function () {
+    t.ok(true, 'client got close event')
+  })
+
+})
+
 test('Server exec()', function (t) {
   t.plan(3)
   t.timeoutAfter(5000)
