@@ -157,13 +157,20 @@ nc2.unixSocket('/var/run/docker.sock').enc('utf8')
 
 ## API
 
-#### `port(<port>)`
+#### `port(int)` or `p(int)`
 
 Netcat can bind to any local port, subject to privilege restrictions and ports that are already in use.
 
+#### `address(host)` or `addr(host)`
+
+When used server-side: set the local address to listen to. `0.0.0.0` by default.
+When used client-side: set the remote address to connect to. `127.0.0.1` by default.
+
 #### `listen()`
 
-#### `unixSocket(path)` (TCP only)
+Make the UDP/TCP server listen on the previously set port.
+
+#### `unixSocket(path)` - TCP only
 
 Optionally you can provide the path to a unix sock file and listen/connect to it.
 
@@ -171,7 +178,11 @@ Optionally you can provide the path to a unix sock file and listen/connect to it
 
 Set an encoding. The most common ones are: `utf8`, `ascii`, `base64`, `hex`, `binary`, `hex`.
 
-#### `keepalive()` or `k()`
+#### `protocol(prot)`
+
+Set a custom protocol. The use of this method is discouraged. Use the methods `tcp()` and `udp()` instead. `tcp` is the default value.
+
+#### `keepalive()` or `k()` - TCP only
 
 When you set the keepalive, the server will stay up and possibly the outStream given to `pipe(outStream)` kept open.
 
@@ -194,10 +205,29 @@ nc.p(2389).exec('base64', ['-d']).listen()
 nc.p(2389).exec('base64 | grep hello').listen()
 ```
 
-#### `bind(<port>)`
+#### `bind(<int>)` - UDP only
 
-UDP-only method.
 Let the UDP client/server listen on the given port. It will also be used as outgoing port if `.port(<n>)` wasn't called.
+
+#### `broadcast(<dst>)` or `b(<dst>)` - UDP only
+
+Set broadcast for the UDP server (eventually you can specify a destination address).
+
+#### `destination(<dst>)` - UDP only
+
+Set a destination address. (`127.0.0.1` is the default value)
+
+#### `waitTime(ms)` or `wait(ms)` - UDP only
+
+Timeout for incoming data. A UDP server will wait `ms` milliseconds from the fist data and if it doesn't get more data, will close the connection.
+
+#### `loopback()` - UDP only
+
+Enable loopback. For instance, when a UDP server is binded to a port and send a message to that port, it will get back the msg if loopback is enabled.
+
+#### `bind(int)` - UDP only
+
+Bind the UDP Server/Client to listen on the given port and use the port set with `port()` only for outgoing packets.
 
 ## Events
 
