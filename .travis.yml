@@ -7,7 +7,6 @@ os:
 node_js:
   - "4"
   - "6"
-  - "7"
 
 cache:
   directories:
