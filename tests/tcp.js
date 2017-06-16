@@ -364,7 +364,6 @@ test('Server waitTime parameter', function (t) {
   }).on('close', function () {
     t.ok(true, 'client got close event (because server closed)')
   })
-
 })
 
 test('Client waitTime parameter', function (t) {
@@ -391,7 +390,6 @@ test('Client waitTime parameter', function (t) {
   }).on('close', function () {
     t.ok(true, 'client got close event')
   })
-
 })
 
 test('Server exec()', function (t) {
