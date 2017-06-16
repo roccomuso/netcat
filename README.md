@@ -163,8 +163,8 @@ Netcat can bind to any local port, subject to privilege restrictions and ports t
 
 #### `address(host)` or `addr(host)`
 
-When used server-side: set the local address to listen to. `0.0.0.0` by default.
-When used client-side: set the remote address to connect to. `127.0.0.1` by default.
+- When used server-side: set the local address to listen to. `0.0.0.0` by default.
+- When used client-side: set the remote address to connect to. `127.0.0.1` by default.
 
 #### `listen()`
 
@@ -173,6 +173,41 @@ Make the UDP/TCP server listen on the previously set port.
 #### `unixSocket(path)` - TCP only
 
 Optionally you can provide the path to a unix sock file and listen/connect to it.
+
+#### `connect()` - TCP only
+
+Client-side only. Let the client connect to the previously set address and port.
+
+#### `retry(ms)` - TCP only
+
+Client-side only. Retry connection every `ms` milliseconds when connection is lost.
+
+#### `interval(sec)` or `i(sec)` - TCP only
+
+Client-side only: Specifies a delay time interval for data sent.
+
+#### `stream()`
+
+Return the client DuplexStream reference.
+
+#### `pipe(outStream)`
+
+Pipe incoming data from the client to the given outStream.
+
+#### `send(data [, cb|host])`
+
+Client-side method.
+
+- in TCP: send data to the connected server. `cb` is called once the data is sent.
+- in UDP: send data to the destination address or to the given host if provided.
+
+#### `end(data)` - TCP only
+
+Client-side method. Send given data and close the connection.
+
+#### `close([cb])`
+
+Client-side method. Close the connection and call `cb` once the socket is closed.
 
 #### `enc()`
 
@@ -204,6 +239,19 @@ nc.p(2389).exec('base64', ['-d']).listen()
 // OR
 nc.p(2389).exec('base64 | grep hello').listen()
 ```
+
+#### `scan(portsInterval, cb)` - TCP only
+
+The netcat client provides also a basic port scan functionality.
+
+The parameters are mandatories.
+The first parameter specify the port/s to scan.
+It can be a single integer, a string interval (like `22-80`) or an array of integer (`[22, 23, 1880]`).
+The callback return as a result an object like `{ '22': 'open', '23': 'closed' ... }`.
+
+#### `init()` - UDP only
+
+The UDP-equivalent of `connect()`. Just for UDP clients.
 
 #### `bind(<int>)` - UDP only
 
@@ -300,10 +348,6 @@ Coverage:
 - [x] Backdoor shell
 - [x] Proxy server
 - [x] UDP.
-
-## Known limitations
-
-None
 
 ## Author
 
