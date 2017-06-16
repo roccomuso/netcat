@@ -155,6 +155,25 @@ nc2.unixSocket('/var/run/docker.sock').enc('utf8')
   .send('GET /images/json HTTP/1.0\r\n\r\n')
 ```
 
+#### UDP listen for packets
+
+```javascript
+var nc = new NetcatServer()
+nc.udp().port(2100).listen().on('data', function (rinfo, data) {
+  console.log('Got', data.toString(), 'from', rinfo.address, rinfo.port)
+  nc.close()
+})
+```
+
+#### UDP send a packet
+
+```javascript
+var nc2 = new NetcatClient()
+nc2.udp().port(2100).wait(1000).init().send('hello', '127.0.0.1')
+```
+
+Send the `hello` buffer to port `2100`, then after `1000` ms close the client.
+
 ## API
 
 #### `port(int)` or `p(int)`
@@ -185,6 +204,13 @@ Client-side only. Retry connection every `ms` milliseconds when connection is lo
 #### `interval(sec)` or `i(sec)` - TCP only
 
 Client-side only: Specifies a delay time interval for data sent.
+
+#### `waitTime(ms)` or `wait(ms)`
+
+Set a timeout.
+
+- A server will wait `ms` milliseconds from the first data and if it doesn't get more data, will close the connection.
+- A client will wait `ms` milliseconds from the first data sent and if there's no more data to send the client will close.
 
 #### `stream()`
 
@@ -281,10 +307,6 @@ Set broadcast for the UDP server (eventually you can specify a destination addre
 
 Set a destination address. (`127.0.0.1` is the default value)
 
-#### `waitTime(ms)` or `wait(ms)` - UDP only
-
-Timeout for incoming data. A UDP server will wait `ms` milliseconds from the fist data and if it doesn't get more data, will close the connection.
-
 #### `loopback()` - UDP only
 
 Enable loopback. For instance, when a UDP server is binded to a port and send a message to that port, it will get back the msg if loopback is enabled.
@@ -342,7 +364,7 @@ Available options:
 - [x] `-u                   UDP mode`
 - [x] `-U                   Listen or connect to a UNIX domain socket`
 - [x] `-v                   verbose`
-- [x] `-w secs              timeout for connects and final net reads (UDP-only)`
+- [x] `-w secs              timeout for connects and final net reads`
 - [x] `-z                   zero-I/O mode [used for scanning]`
 
 
