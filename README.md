@@ -201,7 +201,7 @@ Client-side only. Let the client connect to the previously set address and port.
 
 Client-side only. Retry connection every `ms` milliseconds when connection is lost.
 
-#### `interval(sec)` or `i(sec)` - TCP only
+#### `interval(sec)` or `i(sec)`
 
 Client-side only: Specifies a delay time interval for data sent.
 
