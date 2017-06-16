@@ -194,11 +194,22 @@ Return the client DuplexStream reference.
 
 Pipe incoming data from the client to the given outStream.
 
+#### `serve()`
+
+Server-side method.
+The `serve` method accepts either a string (indicating a file name, make sure the file exists), a Readable stream or a Buffer.
+When you pass a readable stream the keepalive method could cause the stream to be consumed at the first request and no more can be served (The stream is not cached in a buffer).
+
 #### `send(data [, cb|host])`
 
-Client-side method.
+Client-side:
 
 - in TCP: send data to the connected server. `cb` is called once the data is sent.
+- in UDP: send data to the destination address or to the given host if provided.
+
+Server-side:
+
+- in TCP: not available in tcp, use `serve()` instead.
 - in UDP: send data to the destination address or to the given host if provided.
 
 #### `end(data)` - TCP only
@@ -207,7 +218,7 @@ Client-side method. Send given data and close the connection.
 
 #### `close([cb])`
 
-Client-side method. Close the connection and call `cb` once the socket is closed.
+Close the connection (or the connections if executed server-side) and call `cb` once the socket is closed.
 
 #### `enc()`
 
@@ -219,14 +230,11 @@ Set a custom protocol. The use of this method is discouraged. Use the methods `t
 
 #### `keepalive()` or `k()` - TCP only
 
+Server-side method.
+
 When you set the keepalive, the server will stay up and possibly the outStream given to `pipe(outStream)` kept open.
 
 By default in UDP mode the listen is kept alive until an explicit `nc.close()`.
-
-#### `serve()`
-
-The `serve` method accepts either a string (indicating a file name), a Readable stream or a Buffer.
-When you pass a readable stream the keepalive method could cause the stream to be consumed at the first request and no more can be served (The stream is not cached in a buffer).
 
 #### `exec()`
 
@@ -239,6 +247,14 @@ nc.p(2389).exec('base64', ['-d']).listen()
 // OR
 nc.p(2389).exec('base64 | grep hello').listen()
 ```
+
+#### `getClients()` - TCP only
+
+Server-side method. Return an object listing all the client socket references.
+
+#### `proxy(duplexStream)` - TCP only
+
+Server-side method. This method pipe the server incoming/outcoming data to the provided duplexStream. It's like a shortcut for both the calls: `.serve(duplexStream)` and `.pipe(duplexStream)`.
 
 #### `scan(portsInterval, cb)` - TCP only
 
