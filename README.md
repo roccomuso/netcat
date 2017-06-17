@@ -201,9 +201,9 @@ Client-side only. Let the client connect to the previously set address and port.
 
 Client-side only. Retry connection every `ms` milliseconds when connection is lost.
 
-#### `interval(sec)` or `i(sec)`
+#### `interval(ms)` or `i(ms)`
 
-Client-side only: Specifies a delay time interval for data sent.
+Client-side only: Specifies a delay time interval for data sent. In milliseconds.
 
 #### `waitTime(ms)` or `wait(ms)`
 
@@ -282,6 +282,14 @@ Server-side method. Return an object listing all the client socket references.
 
 Server-side method. This method pipe the server incoming/outcoming data to the provided duplexStream. It's like a shortcut for both the calls: `.serve(duplexStream)` and `.pipe(duplexStream)`.
 
+#### `output(outStream)` or `out(outStream)`
+
+Write an Hex dump of incoming or outcoming traffic to the given writable stream `outStream`.
+
+A row represent a chunk of at least 16 bytes by default.
+
+The first character can be either `<` or `>` respectively "incoming chunk" or "outcoming chunk".
+
 #### `scan(portsInterval, cb)` - TCP only
 
 The netcat client provides also a basic port scan functionality.
@@ -297,7 +305,7 @@ The UDP-equivalent of `connect()`. Just for UDP clients.
 
 #### `bind(<int>)` - UDP only
 
-Let the UDP client/server listen on the given port. It will also be used as outgoing port if `.port(<n>)` wasn't called.
+Let the UDP client/server listen on the given port. It will also be used as outcoming port if `.port(<n>)` wasn't called.
 
 #### `broadcast(<dst>)` or `b(<dst>)` - UDP only
 
@@ -313,7 +321,7 @@ Enable loopback. For instance, when a UDP server is binded to a port and send a 
 
 #### `bind(int)` - UDP only
 
-Bind the UDP Server/Client to listen on the given port and use the port set with `port()` only for outgoing packets.
+Bind the UDP Server/Client to listen on the given port and use the port set with `port()` only for outcoming packets.
 
 ## Events
 
@@ -326,6 +334,7 @@ The netcat server extends the `EventEmitter` class. You'll be able to catch some
 ```javascript
 function onData (socket, chunk) {
   console.log(socket.id, 'got', chunk) // Buffer <...>
+  socket.write('hello client') // reply to the client
 }
 ```
 
@@ -344,7 +353,7 @@ Fired when the client/server remains inactive for a specified `wait(ms)` time.
 
 ## CLI usage
 
-For the standalone usage install the `nc` CLI package:
+For the standalone usage install the [nc](https://github.com/roccomuso/nc) CLI package:
 
     $ npm install -g nc
 
@@ -360,20 +369,16 @@ Available options:
 - [x] `-c shell commands    as '-e'; use /bin/sh to exec [dangerous!!]`
 - [x] `-e filename          program to exec after connect [dangerous!!]`
 - [x] `-b                   allow broadcasts`
-- [ ] `-g gateway           source-routing hop point[s], up to 8`
-- [ ] `-G num               source-routing pointer: 4, 8, 12`
 - [x] `-i secs              delay interval for lines sent, ports scanned (client-side)`
 - [x] `-h                   this cruft`
 - [x] `-k set               keepalive option on socket`
 - [x] `-l                   listen mode, for inbound connects`
 - [ ] `-n                   numeric-only IP addresses, no DNS`
-- [ ] `-o file              hex dump of traffic`
+- [x] `-o file              hex dump of traffic`
 - [x] `-p port              local port number`
 - [ ] `-r                   randomize local and remote ports`
 - [ ] `-q secs              quit after EOF on stdin and delay of secs`
 - [x] `-s addr              local source address`
-- [ ] `-T tos               set Type Of Service`
-- [ ] `-t                   answer TELNET negotiation`
 - [x] `-u                   UDP mode`
 - [x] `-U                   Listen or connect to a UNIX domain socket`
 - [x] `-v                   verbose`

@@ -251,6 +251,33 @@ test('Serving a file with serve()', function (t) {
   nc2.addr('127.0.0.1').port(2392).connect().pipe(concatStream)
 })
 
+test('Client output() hex dump', function (t) {
+  t.plan(4)
+  t.timeoutAfter(4000)
+
+  var nc = new NetcatServer()
+
+  var concatDump = concat(function (dump) {
+    console.log(dump.toString())
+    t.ok(dump.toString().indexOf('<') !== -1, 'got incoming hex dump')
+    t.ok(dump.toString().indexOf('>') !== -1, 'got outcoming hex dump')
+  })
+
+  var flag = true
+  nc.port(2091).listen().on('close', function () {
+    t.ok(true, 'server closed')
+  }).on('data', function(sock, msg){
+    if (flag) {
+      sock.write('ciao ciao')
+      t.ok(true, 'server replied to the client sock')
+      flag = false
+    }
+  })
+
+  var nc2 = new NetcatClient()
+  nc2.addr('127.0.0.1').wait(1500).out(concatDump).port(2091).connect().send('At least 16 byte')
+})
+
 test('Serving a file using keepalive to multiple clients', function (t) {
   var nClients = 10 // 10 clients
   t.plan(nClients + 1)
