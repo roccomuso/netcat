@@ -266,7 +266,7 @@ test('Client output() hex dump', function (t) {
   var flag = true
   nc.port(2091).listen().on('close', function () {
     t.ok(true, 'server closed')
-  }).on('data', function(sock, msg){
+  }).on('data', function (sock, msg) {
     if (flag) {
       sock.write('ciao ciao')
       t.ok(true, 'server replied to the client sock')
@@ -276,6 +276,38 @@ test('Client output() hex dump', function (t) {
 
   var nc2 = new NetcatClient()
   nc2.addr('127.0.0.1').wait(1500).out(concatDump).port(2091).connect().send('At least 16 bytez')
+})
+
+test('Server output() hex dump', function (t) {
+  t.plan(7)
+  t.timeoutAfter(4000)
+
+  var nc = new NetcatServer()
+
+  var concatDump = concat(function (dump) {
+    console.log(dump.toString())
+    t.ok(dump.toString().indexOf('<') !== -1, 'got incoming hex dump')
+    t.ok(dump.toString().indexOf('>') !== -1, 'got outcoming hex dump')
+    nc.close()
+  })
+
+  var flag = true
+  nc.port(2092).k().out(concatDump).listen().on('close', function () {
+    t.ok(true, 'server closed')
+  }).on('data', function (sock, msg) {
+    t.equal(msg.toString(), 'Data coming from the client', 'got data from client')
+    if (flag) {
+      sock.write('At least 16 bytez of data')
+      t.ok(true, 'server replied to the client sock')
+      flag = false
+    }
+    nc.close()
+  })
+
+  var nc2 = new NetcatClient()
+  nc2.addr('127.0.0.1').wait(1500).port(2092).connect().send('Data coming from the client').on('data', function (d) {
+    t.equal(d.toString(), 'At least 16 bytez of data', 'client got right response')
+  })
 })
 
 test('Serving a file using keepalive to multiple clients', function (t) {
