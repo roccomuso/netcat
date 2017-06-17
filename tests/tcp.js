@@ -275,7 +275,7 @@ test('Client output() hex dump', function (t) {
   })
 
   var nc2 = new NetcatClient()
-  nc2.addr('127.0.0.1').wait(1500).out(concatDump).port(2091).connect().send('At least 16 byte')
+  nc2.addr('127.0.0.1').wait(1500).out(concatDump).port(2091).connect().send('At least 16 bytez')
 })
 
 test('Serving a file using keepalive to multiple clients', function (t) {
