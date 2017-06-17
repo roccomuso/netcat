@@ -223,8 +223,11 @@ Pipe incoming data from the client to the given outStream.
 #### `serve()`
 
 Server-side method.
+
 The `serve` method accepts either a string (indicating a file name, make sure the file exists), a Readable stream or a Buffer.
 When you pass a readable stream the keepalive method could cause the stream to be consumed at the first request and no more can be served (The stream is not cached in a buffer).
+
+Moreover when serving a file or a Buffer to a socket, the pipe will emit an `end` (EOF) event to the socket. Closing the stream.
 
 #### `send(data [, cb|host])`
 
