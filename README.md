@@ -8,7 +8,7 @@
 
 > Netcat client and server modules written in pure Javascript for Node.js.
 
-This module implements all the basic netcat's features. To use as standalone tool install the [nc](https://github.com/roccomuso/nc) package.
+Fully tested modules that implements all the basic netcat's features. To use as standalone tool install the [nc](https://github.com/roccomuso/nc) package.
 
 | Linux | Mac OS | Windows |
 |-------|--------|---------|
@@ -35,6 +35,8 @@ This module implements all the basic netcat's features. To use as standalone too
 
     $ npm install --save netcat
 
+[![NPM](https://nodei.co/npm/netcat.png?downloads=true&downloadRank=true)](https://nodei.co/npm/netcat/)
+
 ## Usage
 
 ```javascript
@@ -46,9 +48,9 @@ const nc2 = new NetcatClient()
 
 ## Examples
 
-| JS API              | CLI equivalent                     |
-|---------------------|------------------------------------|
-|`nc.port(2389).listen()` | `nc -l -p 2389` |
+This module's API tends to follow as much as possible the original netcat's cli params.
+
+For instance: `nc -l -p 2389` is equivalent to `nc.port(2389).listen()`. Easy right?
 
 #### Server and Client connection
 
