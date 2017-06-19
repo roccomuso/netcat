@@ -1,6 +1,6 @@
 {
   "name": "netcat",
-  "version": "1.1.5",
+  "version": "1.2.5",
   "description": "Netcat client and server modules written in pure Javascript for Node.js",
   "main": "index.js",
   "scripts": {
@@ -18,14 +18,14 @@
   "keywords": [
     "netcat",
     "nc",
-    "swissknife",
     "net",
     "shell",
     "js",
     "node",
     "tcp",
     "udp",
-    "server"
+    "server",
+    "swissarmyknife"
   ],
   "author": "Rocco Musolino",
   "license": "ISC",
