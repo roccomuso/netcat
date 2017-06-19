@@ -288,18 +288,32 @@ test('Server hex dump - output()', function (t) {
   })
 })
 
-/*
-
 test('Client hex dump', function(t){
-  // TODO
+  t.plan(6)
+  t.timeoutAfter(5000)
 
+  var concatDump = concat(function (dump) {
+    console.log(dump.toString())
+    t.ok(dump.toString().indexOf('>') !== -1, 'got outcoming hex dump')
+  })
+
+  var nc = new NetcatServer()
+  nc.udp().port(2102).listen().on('data', function (rinfo, data) {
+    t.equal(rinfo.family, 'IPv4', 'got expected IP version')
+    t.ok(Buffer.isBuffer(data), 'got expected data type')
+    t.equal(data.toString(), 'At least 16 bytez', 'got expected data')
+    nc.close()
+  }).on('close', function () {
+    t.ok(true, 'server got expected close event')
+  })
+
+  var nc2 = new NetcatClient()
+  nc2.udp().port(2102).wait(1000).out(concatDump).init().send('At least 16 bytez', '127.0.0.1').on('close', function () {
+    t.ok(true, 'client got expected close event')
+  })
 })
 
-test('Server hex dump', function(t){
-  // TODO
 
-})
-
+/*
 // TODO: udp proxy (different port)
-
 */
