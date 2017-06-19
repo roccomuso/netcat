@@ -288,7 +288,7 @@ test('Server hex dump - output()', function (t) {
   })
 })
 
-test('Client hex dump', function(t){
+test('Client hex dump', function (t) {
   t.plan(6)
   t.timeoutAfter(5000)
 
@@ -312,7 +312,6 @@ test('Client hex dump', function(t){
     t.ok(true, 'client got expected close event')
   })
 })
-
 
 /*
 // TODO: udp proxy (different port)
