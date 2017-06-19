@@ -262,10 +262,41 @@ test('Bridge: TCP -> UDP', function (t) {
   }, 1500)
 })
 
+test('Server hex dump - output()', function (t) {
+  t.plan(7)
+  t.timeoutAfter(5000)
+
+  var concatDump = concat(function (dump) {
+    console.log(dump.toString())
+    t.ok(dump.toString().indexOf('<') !== -1, 'got incoming hex dump')
+    t.ok(dump.toString().indexOf('>') !== -1, 'got outcoming hex dump')
+  })
+
+  var nc = new NetcatServer()
+  nc.udp().port(2102).out(concatDump).serve(Buffer.from('hello from the server')).listen().on('data', function (rinfo, data) {
+    t.equal(rinfo.family, 'IPv4', 'got expected IP version')
+    t.ok(Buffer.isBuffer(data), 'got expected data type')
+    t.equal(data.toString(), 'At least 16 bytez', 'got expected data')
+    nc.close()
+  }).on('close', function () {
+    t.ok(true, 'server got expected close event')
+  })
+
+  var nc2 = new NetcatClient()
+  nc2.udp().port(2102).wait(1000).init().send('At least 16 bytez', '127.0.0.1').on('close', function () {
+    t.ok(true, 'client got expected close event')
+  })
+})
+
 /*
 
-test('UDP output hex dump', function (t) {
-  // TODO: output to a stream
+test('Client hex dump', function(t){
+  // TODO
+
+})
+
+test('Server hex dump', function(t){
+  // TODO
 
 })
 
