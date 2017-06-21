@@ -343,18 +343,46 @@ function onData (socket, chunk) {
 }
 ```
 
-#### `.on('close', cb)`
+- `.on('data', function(sock/rinfo, msg){})` - Server
 
-Emitted when the server close.
+- `.on('data', function(msg){})` - Client
 
-#### `.on('clientClose', cb)` - TCP server
+- `.on('ready', cb)` - Server
+
+Emitted when the server successfully listen/bind to a port.
+
+- `.on('close', cb)`
+
+Emitted when the server/client close.
+
+- `.on('clientClose', function(socket, hadError){})` - TCP server
 
 Called when a client disconnects from the server.
 The callback accepts as 1th param the `socket` instance just disconnected and a bool val `hadError`.
 
-#### `.on('waitTimeout', cb)`
+- `.on('waitTimeout', cb)`
 
 Fired when the client/server remains inactive for a specified `wait(ms)` time.
+
+- `.on('connection', function(socket){})` - TCP server
+
+Emitted when a new client connects to the server.
+
+- `.on('end', function(socket){})` - TCP server
+
+Emitted when a client end the connection.
+
+- `.on('timeout', function(socket){})` - TCP server
+
+Socket timeout event.
+
+- `.on('connect', cb)` - TCP client
+
+Emitted when the client established a connection with a server.
+
+- `.on('error', function(err){})`
+
+Emitted on error.
 
 ## CLI usage
 
