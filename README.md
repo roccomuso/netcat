@@ -330,7 +330,7 @@ Bind the UDP Server/Client to listen on the given port and use the port set with
 
 ## Events
 
-The netcat server extends the `EventEmitter` class. You'll be able to catch some events straight from the sockets. For example the `data` event:
+The netcat modules extends the `EventEmitter` class. You'll be able to catch some events straight from the sockets. For example the `data` event for the server:
 
 | Server              | Client                    |
 |---------------------|------------------------------------|
@@ -343,40 +343,60 @@ function onData (socket, chunk) {
 }
 ```
 
-- `.on('data', function(sock/rinfo, msg){})` - Server
+### Server events
 
-- `.on('data', function(msg){})` - Client
+- `.on('data', function(sock/rinfo, msg){})`
 
-- `.on('ready', cb)` - Server
+Emitted when the server gets data from the clients.
+
+- `.on('ready', cb)`
 
 Emitted when the server successfully listen/bind to a port.
 
 - `.on('close', cb)`
 
-Emitted when the server/client close.
+Emitted when the server close.
 
-- `.on('clientClose', function(socket, hadError){})` - TCP server
+- `.on('clientClose', function(socket, hadError){})` - **TCP only**
 
 Called when a client disconnects from the server.
 The callback accepts as 1th param the `socket` instance just disconnected and a bool val `hadError`.
 
-- `.on('waitTimeout', cb)`
-
-Fired when the client/server remains inactive for a specified `wait(ms)` time.
-
-- `.on('connection', function(socket){})` - TCP server
+- `.on('connection', function(socket){})` - **TCP only**
 
 Emitted when a new client connects to the server.
 
-- `.on('end', function(socket){})` - TCP server
+- `.on('end', function(socket){})` - **TCP only**
 
 Emitted when a client end the connection.
 
-- `.on('timeout', function(socket){})` - TCP server
+- `.on('timeout', function(socket){})` - **TCP only**
 
 Socket timeout event.
 
-- `.on('connect', cb)` - TCP client
+- `.on('waitTimeout', cb)`
+
+Fired when the server remains inactive for a specified `wait(ms)` time.
+
+- `.on('error', function(err){})`
+
+Emitted on error.
+
+### Client events
+
+- `.on('data', function(msg){})`
+
+Data from the server.
+
+- `.on('close', cb)`
+
+Emitted when the client close.
+
+- `.on('waitTimeout', cb)`
+
+Fired when the client remains inactive for a specified `wait(ms)` time.
+
+- `.on('connect', cb)` - **TCP only**
 
 Emitted when the client established a connection with a server.
 
