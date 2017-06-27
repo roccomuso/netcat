@@ -2,7 +2,6 @@
 
 [![NPM Version](https://img.shields.io/npm/v/netcat.svg)](https://www.npmjs.com/package/netcat)
 ![node](https://img.shields.io/node/v/netcat.svg)
-[![Build Status](https://travis-ci.org/roccomuso/netcat.svg?branch=master)](https://travis-ci.org/roccomuso/netcat)
 [![Dependency Status](https://david-dm.org/roccomuso/netcat.png)](https://david-dm.org/roccomuso/netcat)
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
@@ -10,9 +9,9 @@
 
 Fully tested modules that implements all the basic netcat's features. To use as standalone tool install the [nc](https://github.com/roccomuso/nc) package.
 
-| Linux | Mac OS | Windows |
-|-------|--------|---------|
-| :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| Linux/Mac | Windows |
+|-----------|---------|
+| [![Build Status](https://travis-ci.org/roccomuso/netcat.svg?branch=master)](https://travis-ci.org/roccomuso/netcat) | [![Build status](https://ci.appveyor.com/api/projects/status/q4x7xwtj7ga3ppo5?svg=true)](https://ci.appveyor.com/project/roccomuso/netcat) |
 
 ## What you can do :computer:
 
