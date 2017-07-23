@@ -1,6 +1,3 @@
-module.exports = {
-  server: require('./server'),
-  client: require('./client'),
-  Server: require('./server'), // alias
-  Client: require('./client') // alias
-}
+
+  exports.server = exports.Server = require('./server');
+  exports.client = exports.Client = require('./client');
