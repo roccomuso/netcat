@@ -27,6 +27,7 @@ Fully tested modules that implements all the basic netcat's features. To use as 
 
 ## Enhancement
 
+- [x] [Filter](#filtertransformfn) incoming data.
 - [ ] Crypto.
 - [ ] Authentication (`.auth('pass')`).
 - [ ] `allow` & `deny` specific remote IP-address.
