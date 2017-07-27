@@ -145,6 +145,18 @@ nc.addr('127.0.0.1').scan('22-80', function(ports){
 
 The port scanner is TCP protocol only. The UDP scan is not [really effective](https://en.wikipedia.org/wiki/Port_scanner#UDP_scanning). `scan(...)` accepts also an array or a integer number.
 
+#### Filter incoming data
+
+```javascript
+var nc = new NetcatServer()
+nc.addr('127.0.0.1').port(8080).filter(function (chunk, enc, cb) {
+  // transform upper case
+  var out = chunk.toString().toUpperCase()
+  this.push(Buffer.from(out))
+  cb(null)
+}).pipe(process.stdout).connect()
+```
+
 #### Connect to a UNIX sock file
 
 Both the Netcat server and client supports the UNIX socket conn.
@@ -224,6 +236,14 @@ Return the client DuplexStream reference.
 
 Pipe incoming data from the client to the given outStream.
 
+#### `filter(transformFn)`
+
+Filter the incoming data with the given transform function `function (chunk, enc, cb){...}` before being piped out.
+
+**NB**: The `.on('data', cb)` data you get is not filtered. The filter only applies on the piped `.pipe(...)` stream.
+
+**Known issue**: `through2` right now [doesn't respect](https://github.com/roccomuso/netcat/issues/4) the encoding. If you set a filter you'll get a buffer and the `enc()` method will be useless.
+
 #### `serve()`
 
 Server-side method.
@@ -269,7 +289,7 @@ When you set the keepalive, the server will stay up and possibly the outStream g
 
 By default in UDP mode the listen is kept alive until an explicit `nc.close()`.
 
-#### `exec()`
+#### `exec()` - TCP only
 
 The `exec()` method execute the given command and pipe together his `stdout` and `stderr` with the clients `socket`. It accepts a string and an array of args as second param. If a pipe char is found `|` then all the commands will be processed under a `sh -c`.
 
