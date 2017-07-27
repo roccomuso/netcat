@@ -23,7 +23,7 @@ test('Client and Server constructor', function (t) {
 })
 
 test('Server basic methods', function (t) {
-  t.plan(15)
+  t.plan(16)
 
   try {
     var nc = new NetcatServer()
@@ -33,6 +33,7 @@ test('Server basic methods', function (t) {
     t.equal(nc._address, '0.0.0.0', '0.0.0.0 default address')
     t.equal(nc._keepalive, false, 'no keepalive')
     t.equal(Object.keys(nc._clients).length, 0, 'no clients')
+    t.ok(nc._filter, 'filter is a through2 passthrough')
     /* set methods */
     nc.udp()
     t.equal(nc._protocol, 'udp', 'setting udp as protocol')
@@ -64,7 +65,7 @@ test('Server basic methods', function (t) {
 })
 
 test('Client basic methods', function (t) {
-  t.plan(15)
+  t.plan(16)
   t.timeoutAfter(5000)
 
   try {
@@ -75,6 +76,7 @@ test('Client basic methods', function (t) {
     t.equal(nc._protocol, 'tcp', 'protocol is tcp by default')
     t.equal(nc._address, '127.0.0.1', '127.0.0.1 default address')
     t.equal(nc._interval, false, 'no interval by default')
+    t.ok(nc._filter, 'filter is a through2 passthrough')
     /* set methods */
     nc.udp()
     t.equal(nc._protocol, 'udp', 'setting udp as protocol')
@@ -502,6 +504,60 @@ test('Client exec()', function (t) {
   nc2.port(2401).exec(cmd).connect()
   t.equal(nc2._exec, cmd, 'exec set')
 })
+
+test('Server/Client: traffic pipe filter()', function (t) {
+  t.plan(2)
+  t.timeoutAfter(2000)
+
+  var toUpperCase = function (chunk, enc, cb) { // transform fn
+    var out = chunk.toString().toUpperCase()
+    this.push(Buffer.from(out))
+    cb(null)
+  }
+
+  var srvGotData = concat(function (data) {
+    t.equal(data.toString(), 'CLIENT DATA', 'server got filtered data')
+  })
+
+  var nc = new NetcatServer()
+  nc.port(2402).filter(toUpperCase).serve(Buffer.from('server data')).pipe(srvGotData).listen()
+
+  var clientGotData = concat(function (data) {
+    t.equal(data.toString(), 'SERVER DATA', 'client got filtered data')
+  })
+
+  var nc2 = new NetcatClient()
+  nc2.port(2402).filter(toUpperCase).connect(function () {
+    this.send('client data')
+  }).pipe(clientGotData)
+})
+
+/*
+// BUG: filters not applied on the emitted data. Because of github.com/roccomuso/netcat/issues/4
+test('Server/Client: traffic on data filter()', function (t) {
+  t.plan(2)
+  t.timeoutAfter(2000)
+
+  var toUpperCase = function (chunk, enc, cb) { // transform fn
+    var out = chunk.toString().toUpperCase()
+    this.push(Buffer.from(out))
+    cb(null)
+  }
+
+  var nc = new NetcatServer()
+  nc.port(2402).filter(toUpperCase).serve(Buffer.from('server data')).on('data', function (socket, data) {
+    t.equal(data.toString(), 'CLIENT DATA', 'server got filtered data')
+    nc.close()
+  }).listen()
+
+  var nc2 = new NetcatClient()
+  nc2.port(2402).filter(toUpperCase).connect(function () {
+    this.send('client data')
+  }).on('data', function (data) {
+    t.equal(data.toString(), 'SERVER DATA', 'client got filtered data')
+  })
+})
+*/
 
 test('Proxy server', function (t) {
   t.plan(1)

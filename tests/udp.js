@@ -313,6 +313,27 @@ test('Client hex dump', function (t) {
   })
 })
 
+test('Server: traffic pipe filter()', function (t) {
+  t.plan(1)
+  t.timeoutAfter(2000)
+
+  var toUpperCase = function (chunk, enc, cb) { // transform fn
+    var out = chunk.toString().toUpperCase()
+    this.push(Buffer.from(out))
+    cb(null)
+  }
+
+  var srvGotData = concat(function (data) {
+    t.equal(data.toString(), 'CLIENT DATA', 'server got filtered data')
+  })
+
+  var nc = new NetcatServer()
+  nc.udp().port(2099).filter(toUpperCase).wait(1000).pipe(srvGotData).listen()
+
+  var nc2 = new NetcatClient()
+  nc2.udp().port(2099).init().wait(500).send('client data')
+})
+
 /*
 // TODO: udp proxy (different port)
 */
