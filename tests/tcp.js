@@ -5,6 +5,7 @@ const fs = require('fs')
 const os = require('os')
 const path = require('path')
 const concat = require('concat-stream')
+const through2 = require('through2')
 const Netcat = require('../')
 const NetcatServer = Netcat.server
 const NetcatClient = Netcat.client
@@ -503,6 +504,36 @@ test('Client exec()', function (t) {
   var nc2 = new NetcatClient()
   nc2.port(2401).exec(cmd).connect()
   t.equal(nc2._exec, cmd, 'exec set')
+})
+
+test('Client retry() connections', function(t) {
+  var iteration = 12
+  t.plan(iteration * 4)
+  t.timeoutAfter(4000)
+
+  var clientGotData = through2(function (chunk, enc, next) {
+    t.equal(chunk.toString(), 'test data from server', 'client got data')
+    next(null, chunk)
+  })
+
+  var nc = new NetcatServer()
+  nc.k().port(2403).listen().serve(Buffer.from('test data from server')).on('data', function (socket, data) {
+    t.equal(data.toString(), 'test data from client', 'server got data')
+    if (--iteration > 0) {
+      socket.destroy() // disconnect client
+    } else {
+      nc.close()
+      nc2.close()
+    }
+  })
+
+  var nc2 = new NetcatClient()
+  nc2.port(2403).retry(150).connect(function () {
+    this.send('test data from client')
+    t.ok(this, 'client connected')
+  }).pipe(clientGotData).on('close', function () {
+    t.ok(this, 'client disconnected')
+  })
 })
 
 test('Server/Client: traffic pipe filter()', function (t) {
