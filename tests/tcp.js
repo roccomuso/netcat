@@ -506,7 +506,7 @@ test('Client exec()', function (t) {
   t.equal(nc2._exec, cmd, 'exec set')
 })
 
-test('Client retry() connections', function(t) {
+test('Client retry() connections', function (t) {
   var iteration = 12
   t.plan(iteration * 4)
   t.timeoutAfter(4000)
