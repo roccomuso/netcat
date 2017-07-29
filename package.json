@@ -41,7 +41,7 @@
     "tape": "^4.6.3"
   },
   "dependencies": {
-    "async": "^2.4.1",
+    "async-each-series": "^1.1.0",
     "datagram-stream": "^1.1.1",
     "debug": "^2.6.6",
     "hexer": "^1.5.0",
