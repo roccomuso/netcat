@@ -458,7 +458,7 @@ test('Server exec()', function (t) {
   t.plan(3)
   t.timeoutAfter(5000)
 
-  var cmd = (os.platform() === 'win32') ? 'type' : 'cat'
+  var cmd = (os.platform() === 'win32') ? 'more' : 'cat'
 
   var nc = new NetcatServer()
   nc.port(2400).listen()
@@ -484,7 +484,7 @@ test('Client exec()', function (t) {
   t.plan(5)
   t.timeoutAfter(5000)
 
-  var cmd = (os.platform() === 'win32') ? 'type' : 'cat'
+  var cmd = (os.platform() === 'win32') ? 'more' : 'cat'
 
   var nc = new NetcatServer()
   nc.port(2401).listen()
