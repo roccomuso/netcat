@@ -484,3 +484,7 @@ Coverage:
 ## Author
 
 Rocco Musolino ([@roccomuso](https://twitter.com/roccomuso))
+
+## License
+
+MIT
