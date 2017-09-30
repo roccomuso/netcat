@@ -292,7 +292,7 @@ By default in UDP mode the listen is kept alive until an explicit `nc.close()`.
 
 #### `exec()` - TCP only
 
-The `exec()` method execute the given command and pipe together his `stdout` and `stderr` with the clients `socket`. It accepts a string and an array of args as second param. If a pipe char is found `|` then all the commands will be processed under a `sh -c`.
+The `exec()` method execute the given command and pipe together his `stdout` and `stderr` with the clients `socket`. It optionally accepts a string and an array of args as second param and the [spawn options](https://nodejs.org/api/child_process.html#child_process_child_process_spawn_command_args_options) as third param. If a pipe char is found `|` then all the commands will be processed under a `sh -c`.
 
 Example:
 
