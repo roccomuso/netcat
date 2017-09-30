@@ -458,11 +458,12 @@ test('Server exec()', function (t) {
   t.plan(3)
   t.timeoutAfter(5000)
 
-  var cmd = (os.platform() === 'win32') ? 'more' : 'cat'
+  var cmd = (os.platform() === 'win32') ? 'cat.exe' : 'cat'
+  var opts = (os.platform() === 'win32') ? {cwd: __dirname} : null
 
   var nc = new NetcatServer()
   nc.port(2400).listen()
-  .exec(cmd)
+  .exec(cmd, opts)
   .on('close', function () {
     t.ok(true, 'server closed (no keepalive)')
   })
@@ -484,7 +485,8 @@ test('Client exec()', function (t) {
   t.plan(5)
   t.timeoutAfter(5000)
 
-  var cmd = (os.platform() === 'win32') ? 'more' : 'cat'
+  var cmd = (os.platform() === 'win32') ? 'cat.exe' : 'cat'
+  var opts = (os.platform() === 'win32') ? {cwd: __dirname} : null
 
   var nc = new NetcatServer()
   nc.port(2401).listen()
@@ -502,7 +504,7 @@ test('Client exec()', function (t) {
   })
 
   var nc2 = new NetcatClient()
-  nc2.port(2401).exec(cmd).connect()
+  nc2.port(2401).exec(cmd, opts).connect()
   t.equal(nc2._exec, cmd, 'exec set')
 })
 
