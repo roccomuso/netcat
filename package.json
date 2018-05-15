@@ -35,7 +35,7 @@
   "homepage": "https://github.com/roccomuso/netcat#readme",
   "devDependencies": {
     "concat-stream": "^1.6.2",
-    "nsp": "^3.2.1",
+    "nsp": "^2.8.1",
     "standard": "^11.0.1",
     "tap-spec": "^4.1.1",
     "tape": "^4.9.0"
