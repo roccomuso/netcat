@@ -193,10 +193,10 @@ test('Transfer a file (stream)', function (t) {
 
   // waitTime to close after 1 sec of inactivity since the last msg
   nc.udp().port(2105).wait(1000).listen().pipe(concatStream)
-  .on('close', function () {
-    t.ok(true, 'server closed event')
-    nc2.close()
-  })
+    .on('close', function () {
+      t.ok(true, 'server closed event')
+      nc2.close()
+    })
 
   var nc2 = new NetcatClient()
   nc2.udp().destination('127.0.0.1').port(2105).init()

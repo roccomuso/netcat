@@ -463,10 +463,10 @@ test('Server exec()', function (t) {
 
   var nc = new NetcatServer()
   nc.port(2400).listen()
-  .exec(cmd, null, opts)
-  .on('close', function () {
-    t.ok(true, 'server closed (no keepalive)')
-  })
+    .exec(cmd, null, opts)
+    .on('close', function () {
+      t.ok(true, 'server closed (no keepalive)')
+    })
   t.equal(nc._exec, cmd, 'spawning process')
 
   var nc2 = new NetcatClient()
@@ -490,18 +490,18 @@ test('Client exec()', function (t) {
 
   var nc = new NetcatServer()
   nc.port(2401).listen()
-  .once('connection', function (socket) {
-    t.ok(socket, 'client connected')
-    socket.write('Hello World')
-  })
-  .once('data', function (sock, buf) { // one chunk
-    t.ok(sock, 'got socket instance')
-    t.equal(buf.toString(), 'Hello World', 'got expected stdout')
-    nc.close()
-  })
-  .once('close', function () {
-    t.ok(true, 'server closed (no keepalive)')
-  })
+    .once('connection', function (socket) {
+      t.ok(socket, 'client connected')
+      socket.write('Hello World')
+    })
+    .once('data', function (sock, buf) { // one chunk
+      t.ok(sock, 'got socket instance')
+      t.equal(buf.toString(), 'Hello World', 'got expected stdout')
+      nc.close()
+    })
+    .once('close', function () {
+      t.ok(true, 'server closed (no keepalive)')
+    })
 
   var nc2 = new NetcatClient()
   nc2.port(2401).exec(cmd, null, opts).connect()
