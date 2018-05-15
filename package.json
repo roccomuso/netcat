@@ -1,6 +1,6 @@
 {
   "name": "netcat",
-  "version": "1.3.3",
+  "version": "1.3.4",
   "description": "Netcat client and server modules written in pure Javascript for Node.js",
   "main": "index.js",
   "scripts": {
