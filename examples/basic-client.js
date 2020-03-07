@@ -1,4 +1,4 @@
-var netcat = require('./index')
+var netcat = require('../index')
 var NetcatClient = netcat.client
 
 var nc = new NetcatClient()
