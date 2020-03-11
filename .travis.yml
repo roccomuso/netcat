@@ -5,8 +5,8 @@ os:
   - osx
 
 node_js:
-  - "6.4.0"
   - "10.8.0"
+  - "12.8.1"
 
 cache:
   directories:
