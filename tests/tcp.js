@@ -14,8 +14,8 @@ test('Client and Server constructor', function (t) {
   t.plan(2) // plan assertions
 
   try {
-    var nc = new NetcatServer()
-    var nc2 = new NetcatClient()
+    const nc = new NetcatServer()
+    const nc2 = new NetcatClient()
     t.ok(nc, 'Server constructor')
     t.ok(nc2, 'Client constructor')
   } catch (e) {
@@ -27,7 +27,7 @@ test('Server basic methods', function (t) {
   t.plan(16)
 
   try {
-    var nc = new NetcatServer()
+    const nc = new NetcatServer()
     /* checking default values */
     t.equal(nc._port, null, 'port null by default')
     t.equal(nc._protocol, 'tcp', 'protocol is tcp by default')
@@ -70,8 +70,8 @@ test('Client basic methods', function (t) {
   t.timeoutAfter(5000)
 
   try {
-    var srv = new NetcatServer().port(2390).listen() // server
-    var nc = new NetcatClient()
+    const srv = new NetcatServer().port(2390).listen() // server
+    const nc = new NetcatClient()
     /* checking default values */
     t.equal(nc._port, null, 'port null by default')
     t.equal(nc._protocol, 'tcp', 'protocol is tcp by default')
@@ -115,8 +115,8 @@ test('TCP Client Server connection', function (t) {
   t.plan(4)
   t.timeoutAfter(5000)
 
-  var nc = new NetcatServer()
-  var nc2 = new NetcatClient()
+  const nc = new NetcatServer()
+  const nc2 = new NetcatClient()
 
   nc.port(2391).listen().on('data', function (socket, data) {
     t.ok(socket.id, 'Socket got an ID assigned')
@@ -141,8 +141,8 @@ test('Client: send raw buffer', function (t) {
   t.plan(5)
   t.timeoutAfter(4000)
 
-  var nc = new NetcatServer()
-  var nc2 = new NetcatClient()
+  const nc = new NetcatServer()
+  const nc2 = new NetcatClient()
 
   nc.port(2291).listen().on('data', function (socket, data) {
     t.ok(socket.id, 'Socket got an ID assigned')
@@ -168,10 +168,10 @@ test('Test different data Encoding', function (t) {
   t.plan(14)
   t.timeoutAfter(4000)
 
-  var nc = new NetcatServer()
-  var nc2 = new NetcatClient()
-  var nc3 = new NetcatServer()
-  var nc4 = new NetcatClient()
+  const nc = new NetcatServer()
+  const nc2 = new NetcatClient()
+  const nc3 = new NetcatServer()
+  const nc4 = new NetcatClient()
 
   // server utf8
   nc.port(2387).enc('utf8').serve(Buffer.from('pong')).listen().on('data', function (socket, data) {
@@ -218,11 +218,11 @@ test('Transfer a file (stream)', function (t) {
   t.plan(2)
   t.timeoutAfter(4000)
 
-  var nc = new NetcatServer()
-  var testFile = path.join(__dirname, 'tcp.js')
-  var inputFile = fs.readFileSync(testFile)
+  const nc = new NetcatServer()
+  const testFile = path.join(__dirname, 'tcp.js')
+  const inputFile = fs.readFileSync(testFile)
 
-  var concatStream = concat(function (file) {
+  const concatStream = concat(function (file) {
     t.equal(file.toString(), inputFile.toString(), 'server got expected file')
   })
 
@@ -230,7 +230,7 @@ test('Transfer a file (stream)', function (t) {
     t.ok(true, 'server closed (no keepalive)')
   })
 
-  var nc2 = new NetcatClient()
+  const nc2 = new NetcatClient()
   fs.createReadStream(testFile).pipe(nc2.addr('127.0.0.1').port(2191).connect().stream())
 })
 
@@ -238,19 +238,19 @@ test('Serving a file with serve()', function (t) {
   t.plan(2)
   t.timeoutAfter(4000)
 
-  var testFile = path.join(__dirname, 'tcp.js')
-  var inputFile = fs.readFileSync(testFile)
+  const testFile = path.join(__dirname, 'tcp.js')
+  const inputFile = fs.readFileSync(testFile)
 
-  var nc = new NetcatServer()
+  const nc = new NetcatServer()
   nc.port(2392).listen().serve(testFile).on('close', function () {
     t.ok(true, 'server closed (no keepalive)')
   })
 
-  var concatStream = concat(function (file) {
+  const concatStream = concat(function (file) {
     t.equal(file.toString(), inputFile.toString(), 'client got expected file')
   })
 
-  var nc2 = new NetcatClient()
+  const nc2 = new NetcatClient()
   nc2.addr('127.0.0.1').port(2392).connect().pipe(concatStream)
 })
 
@@ -258,15 +258,15 @@ test('Client output() hex dump', function (t) {
   t.plan(4)
   t.timeoutAfter(4000)
 
-  var nc = new NetcatServer()
+  const nc = new NetcatServer()
 
-  var concatDump = concat(function (dump) {
+  const concatDump = concat(function (dump) {
     console.log(dump.toString())
     t.ok(dump.toString().indexOf('<') !== -1, 'got incoming hex dump')
     t.ok(dump.toString().indexOf('>') !== -1, 'got outcoming hex dump')
   })
 
-  var flag = true
+  let flag = true
   nc.port(2091).listen().on('close', function () {
     t.ok(true, 'server closed')
   }).on('data', function (sock, msg) {
@@ -277,7 +277,7 @@ test('Client output() hex dump', function (t) {
     }
   })
 
-  var nc2 = new NetcatClient()
+  const nc2 = new NetcatClient()
   nc2.addr('127.0.0.1').wait(1500).out(concatDump).port(2091).connect().send('At least 16 bytez')
 })
 
@@ -285,16 +285,16 @@ test('Server output() hex dump', function (t) {
   t.plan(7)
   t.timeoutAfter(4000)
 
-  var nc = new NetcatServer()
+  const nc = new NetcatServer()
 
-  var concatDump = concat(function (dump) {
+  const concatDump = concat(function (dump) {
     console.log(dump.toString())
     t.ok(dump.toString().indexOf('<') !== -1, 'got incoming hex dump')
     t.ok(dump.toString().indexOf('>') !== -1, 'got outcoming hex dump')
     nc.close()
   })
 
-  var flag = true
+  let flag = true
   nc.port(2092).k().out(concatDump).listen().on('close', function () {
     t.ok(true, 'server closed')
   }).on('data', function (sock, msg) {
@@ -307,26 +307,26 @@ test('Server output() hex dump', function (t) {
     nc.close()
   })
 
-  var nc2 = new NetcatClient()
+  const nc2 = new NetcatClient()
   nc2.addr('127.0.0.1').wait(1500).port(2092).connect().send('Data coming from the client').on('data', function (d) {
     t.equal(d.toString(), 'At least 16 bytez of data', 'client got right response')
   })
 })
 
 test('Serving a file using keepalive to multiple clients', function (t) {
-  var nClients = 10 // 10 clients
+  const nClients = 10 // 10 clients
   t.plan(nClients + 1)
   t.timeoutAfter(5000)
-  var k = 0
+  let k = 0
 
-  var testFile = path.join(__dirname, 'tcp.js')
-  var inputFile = fs.readFileSync(testFile)
+  const testFile = path.join(__dirname, 'tcp.js')
+  const inputFile = fs.readFileSync(testFile)
 
-  var nc = new NetcatServer()
+  const nc = new NetcatServer()
   nc.port(2393).keepalive().listen().serve(testFile)
 
-  var NCs = {}
-  for (var i = 0; i < nClients; i++) {
+  const NCs = {}
+  for (let i = 0; i < nClients; i++) {
     NCs[i] = new NetcatClient()
     NCs[i].addr('127.0.0.1').port(2393).connect().pipe(concat(function (file) {
       t.equal(file.toString(), inputFile.toString(), 'client got expected file')
@@ -343,40 +343,40 @@ test('Serving an instance of stream', function (t) {
   t.plan(2)
   t.timeoutAfter(4000)
 
-  var testFile = path.join(__dirname, 'tcp.js')
-  var inputFile = fs.readFileSync(testFile)
-  var inputStream = fs.createReadStream(testFile)
+  const testFile = path.join(__dirname, 'tcp.js')
+  const inputFile = fs.readFileSync(testFile)
+  const inputStream = fs.createReadStream(testFile)
 
-  var nc = new NetcatServer()
+  const nc = new NetcatServer()
   nc.port(2492).listen().serve(inputStream).on('close', function () {
     t.ok(true, 'server closed (no keepalive)')
   })
 
-  var concatStream = concat(function (file) {
+  const concatStream = concat(function (file) {
     t.equal(file.toString(), inputFile.toString(), 'client got expected stream')
   })
 
-  var nc2 = new NetcatClient()
+  const nc2 = new NetcatClient()
   nc2.addr('127.0.0.1').port(2492).connect().pipe(concatStream)
 })
 
 test('Serving a stream using keepalive to multiple clients', function (t) {
-  var nClients = 10 // 10 clients
+  const nClients = 10 // 10 clients
   t.plan(nClients * 2 + 1)
   t.timeoutAfter(5000)
-  var k = 0
+  let k = 0
 
-  var testFile = path.join(__dirname, 'tcp.js')
-  var inputFile = fs.readFileSync(testFile)
-  var inputStream = fs.createReadStream(testFile)
+  const testFile = path.join(__dirname, 'tcp.js')
+  const inputFile = fs.readFileSync(testFile)
+  const inputStream = fs.createReadStream(testFile)
 
-  var nc = new NetcatServer()
+  const nc = new NetcatServer()
   nc.port(2394).k().listen().serve(inputStream).on('clientClose', function (socket) {
     t.ok(socket, 'socket client close event catched')
   })
 
-  var NCs = {}
-  for (var i = 0; i < nClients; i++) {
+  const NCs = {}
+  for (let i = 0; i < nClients; i++) {
     NCs[i] = new NetcatClient()
     NCs[i].addr('127.0.0.1').port(2394).connect().pipe(concat(function (file) {
       t.equal(file.toString(), inputFile.toString(), 'client got expected file')
@@ -393,16 +393,16 @@ test('Serving a raw Buffer', function (t) {
   t.plan(2)
   t.timeoutAfter(4000)
 
-  var nc = new NetcatServer()
+  const nc = new NetcatServer()
   nc.port(2592).listen().serve(Buffer.from('Hello World')).on('close', function () {
     t.ok(true, 'server closed (no keepalive)')
   })
 
-  var concatStream = concat(function (buf) {
+  const concatStream = concat(function (buf) {
     t.equal(buf.toString(), 'Hello World', 'client got expected Buffer')
   })
 
-  var nc2 = new NetcatClient()
+  const nc2 = new NetcatClient()
   nc2.addr('127.0.0.1').port(2592).connect().pipe(concatStream)
 })
 
@@ -410,7 +410,7 @@ test('Server waitTime parameter', function (t) {
   t.plan(6)
   t.timeoutAfter(4000)
 
-  var nc = new NetcatServer()
+  const nc = new NetcatServer()
   nc.port(2593).k().wait(1000).listen().serve(Buffer.from('Hello World')).on('waitTimeout', function () {
     t.ok(true, 'server closed (by waitTime)')
   }).on('close', function () {
@@ -420,7 +420,7 @@ test('Server waitTime parameter', function (t) {
     t.equal(buf.toString(), 'yoyo', 'got expected data from client')
   })
 
-  var nc2 = new NetcatClient()
+  const nc2 = new NetcatClient()
   nc2.addr('127.0.0.1').port(2593).connect().send('yoyo').on('data', function (d) {
     t.equal(d.toString(), 'Hello World', 'got expected data from server')
   }).on('close', function () {
@@ -432,7 +432,7 @@ test('Client waitTime parameter', function (t) {
   t.plan(6)
   t.timeoutAfter(4000)
 
-  var nc = new NetcatServer()
+  const nc = new NetcatServer()
   nc.port(2594).k().listen().serve(Buffer.from('Hello World')).on('waitTimeout', function () {
     t.fail('server should not be closed by waitTime')
   }).on('close', function () {
@@ -443,7 +443,7 @@ test('Client waitTime parameter', function (t) {
   })
 
   // client close after 2 sec of inactivity
-  var nc2 = new NetcatClient()
+  const nc2 = new NetcatClient()
   nc2.addr('127.0.0.1').wait(2000).port(2594).connect().send('yoyo').on('data', function (d) {
     t.equal(d.toString(), 'Hello World', 'got expected data from server')
   }).on('waitTimeout', function () {
@@ -458,10 +458,10 @@ test('Server exec()', function (t) {
   t.plan(3)
   t.timeoutAfter(5000)
 
-  var cmd = (os.platform() === 'win32') ? 'cat.exe' : 'cat'
-  var opts = (os.platform() === 'win32') ? { cwd: __dirname } : {}
+  const cmd = (os.platform() === 'win32') ? 'cat.exe' : 'cat'
+  const opts = (os.platform() === 'win32') ? { cwd: __dirname } : {}
 
-  var nc = new NetcatServer()
+  const nc = new NetcatServer()
   nc.port(2400).listen()
     .exec(cmd, null, opts)
     .on('close', function () {
@@ -469,9 +469,9 @@ test('Server exec()', function (t) {
     })
   t.equal(nc._exec, cmd, 'spawning process')
 
-  var nc2 = new NetcatClient()
+  const nc2 = new NetcatClient()
   nc2.port(2400).connect(function () {
-    var self = this
+    const self = this
     setTimeout(function () {
       self.send('Hello World')
     }, 1000)
@@ -485,10 +485,10 @@ test('Client exec()', function (t) {
   t.plan(5)
   t.timeoutAfter(5000)
 
-  var cmd = (os.platform() === 'win32') ? 'cat.exe' : 'cat'
-  var opts = (os.platform() === 'win32') ? { cwd: __dirname } : null
+  const cmd = (os.platform() === 'win32') ? 'cat.exe' : 'cat'
+  const opts = (os.platform() === 'win32') ? { cwd: __dirname } : null
 
-  var nc = new NetcatServer()
+  const nc = new NetcatServer()
   nc.port(2401).listen()
     .once('connection', function (socket) {
       t.ok(socket, 'client connected')
@@ -503,22 +503,22 @@ test('Client exec()', function (t) {
       t.ok(true, 'server closed (no keepalive)')
     })
 
-  var nc2 = new NetcatClient()
+  const nc2 = new NetcatClient()
   nc2.port(2401).exec(cmd, null, opts).connect()
   t.equal(nc2._exec, cmd, 'exec set')
 })
 
 test('Client retry() connections', function (t) {
-  var iteration = 12
+  let iteration = 12
   t.plan(iteration * 4)
   t.timeoutAfter(4000)
 
-  var clientGotData = through2(function (chunk, enc, next) {
+  const clientGotData = through2(function (chunk, enc, next) {
     t.equal(chunk.toString(), 'test data from server', 'client got data')
     next(null, chunk)
   })
 
-  var nc = new NetcatServer()
+  const nc = new NetcatServer()
   nc.k().port(2403).listen().serve(Buffer.from('test data from server')).on('data', function (socket, data) {
     t.equal(data.toString(), 'test data from client', 'server got data')
     if (--iteration > 0) {
@@ -529,7 +529,7 @@ test('Client retry() connections', function (t) {
     }
   })
 
-  var nc2 = new NetcatClient()
+  const nc2 = new NetcatClient()
   nc2.port(2403).retry(150).connect(function () {
     this.send('test data from client')
     t.ok(this, 'client connected')
@@ -542,24 +542,24 @@ test('Server/Client: traffic pipe filter()', function (t) {
   t.plan(2)
   t.timeoutAfter(2000)
 
-  var toUpperCase = function (chunk, enc, cb) { // transform fn
-    var out = chunk.toString().toUpperCase()
+  const toUpperCase = function (chunk, enc, cb) { // transform fn
+    const out = chunk.toString().toUpperCase()
     this.push(Buffer.from(out))
     cb(null)
   }
 
-  var srvGotData = concat(function (data) {
+  const srvGotData = concat(function (data) {
     t.equal(data.toString(), 'CLIENT DATA', 'server got filtered data')
   })
 
-  var nc = new NetcatServer()
+  const nc = new NetcatServer()
   nc.port(2402).filter(toUpperCase).serve(Buffer.from('server data')).pipe(srvGotData).listen()
 
-  var clientGotData = concat(function (data) {
+  const clientGotData = concat(function (data) {
     t.equal(data.toString(), 'SERVER DATA', 'client got filtered data')
   })
 
-  var nc2 = new NetcatClient()
+  const nc2 = new NetcatClient()
   nc2.port(2402).filter(toUpperCase).connect(function () {
     this.send('client data')
   }).pipe(clientGotData)
@@ -571,19 +571,19 @@ test('Server/Client: traffic on data filter()', function (t) {
   t.plan(2)
   t.timeoutAfter(2000)
 
-  var toUpperCase = function (chunk, enc, cb) { // transform fn
-    var out = chunk.toString().toUpperCase()
+  const toUpperCase = function (chunk, enc, cb) { // transform fn
+    const out = chunk.toString().toUpperCase()
     this.push(Buffer.from(out))
     cb(null)
   }
 
-  var nc = new NetcatServer()
+  const nc = new NetcatServer()
   nc.port(2402).filter(toUpperCase).serve(Buffer.from('server data')).on('data', function (socket, data) {
     t.equal(data.toString(), 'CLIENT DATA', 'server got filtered data')
     nc.close()
   }).listen()
 
-  var nc2 = new NetcatClient()
+  const nc2 = new NetcatClient()
   nc2.port(2402).filter(toUpperCase).connect(function () {
     this.send('client data')
   }).on('data', function (data) {
@@ -596,10 +596,10 @@ test('Proxy server', function (t) {
   t.plan(1)
   t.timeoutAfter(5000)
 
-  var nc = new NetcatServer()
-  var nc2 = new NetcatClient()
-  var srv = new NetcatServer()
-  var client = new NetcatClient()
+  const nc = new NetcatServer()
+  const nc2 = new NetcatClient()
+  const srv = new NetcatServer()
+  const client = new NetcatClient()
 
   // target server
   srv.port(2222).serve(Buffer.from('Cool stuff')).listen()
@@ -621,12 +621,12 @@ test('Port scan', function (t) {
   t.timeoutAfter(5000)
 
   // spawn a few servers
-  var nc = new NetcatServer().port(3001).listen()
-  var nc2 = new NetcatServer().port(3002).listen()
-  var nc3 = new NetcatServer().port(3003).listen()
+  const nc = new NetcatServer().port(3001).listen()
+  const nc2 = new NetcatServer().port(3002).listen()
+  const nc3 = new NetcatServer().port(3003).listen()
 
   // scan ports
-  var client = new NetcatClient()
+  const client = new NetcatClient()
   client.tcp().addr('127.0.0.1').scan('3001-3006', function (ports) {
     t.equal(Object.keys(ports).length, 6, 'got expected number of ports')
     t.equal(ports['3001'], 'open', 'expect 3001 port to be open')
