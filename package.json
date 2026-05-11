@@ -14,7 +14,7 @@
     "url": "git+https://github.com/roccomuso/netcat.git"
   },
   "engines": {
-    "node": ">=10.8.0"
+    "node": ">=22.0.0"
   },
   "keywords": [
     "netcat",
