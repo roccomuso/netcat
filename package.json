@@ -45,7 +45,7 @@
     "datagram-stream": "^1.1.1",
     "debug": "^4.0.1",
     "hexer": "^1.5.0",
-    "nanoid": "^2.0.0",
+    "nanoid": "^3.3.8",
     "through2": "^3.0.0"
   }
 }
