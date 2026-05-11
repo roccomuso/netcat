@@ -106,8 +106,8 @@ The `exec()` method executes the given command and pipes its `stdout` and `stder
 Netcat can be configured as a proxy server:
 
 ```javascript
-var nc = new NetcatServer()
-var nc2 = new NetcatClient()
+const nc = new NetcatServer()
+const nc2 = new NetcatClient()
 nc2.addr('google.com').port(80).connect()
 nc.port(8080).k().listen().proxy(nc2.stream())
 ```
@@ -120,7 +120,7 @@ Similarly, you can set up port forwarding by using the same host.
 Pretend to be an Apache server:
 
 ```javascript
-var apache = `HTTP/1.1 200 OK
+const apache = `HTTP/1.1 200 OK
 Date: Sat, 27 May 2017 16:51:02 GMT
 Server: Apache/2.4.7 (Ubuntu)
 Cache-Control: public, max-age=0
@@ -128,8 +128,8 @@ Content-Type: text/html; charset=utf-8
 Content-Length: 16894
 Vary: Accept-Encoding
 `
-var nc = new NetcatServer()
-var logFile = fs.createWriteStream('log.txt')
+const nc = new NetcatServer()
+const logFile = fs.createWriteStream('log.txt')
 nc.port(80).k().listen().serve(Buffer.from(apache)).pipe(logFile)
 ```
 
@@ -138,7 +138,7 @@ nc.port(80).k().listen().serve(Buffer.from(apache)).pipe(logFile)
 The netcat client also provides basic port scan functionality.
 
 ```javascript
-var nc = new NetcatClient()
+const nc = new NetcatClient()
 nc.addr('127.0.0.1').scan('22-80', function (ports) {
  // ports: { '22': 'open', '23': 'closed' ... }
 })
@@ -149,10 +149,10 @@ The port scanner is TCP-only. UDP scanning is not [very effective](https://en.wi
 #### Filter incoming data
 
 ```javascript
-var nc = new NetcatServer()
+const nc = new NetcatServer()
 nc.addr('127.0.0.1').port(8080).filter(function (chunk, enc, cb) {
   // transform upper case
-  var out = chunk.toString().toUpperCase()
+  const out = chunk.toString().toUpperCase()
   this.push(Buffer.from(out))
   cb(null)
 }).pipe(process.stdout).listen()
@@ -175,7 +175,7 @@ nc2.unixSocket('/var/run/docker.sock').enc('utf8')
 #### UDP listen for packets
 
 ```javascript
-var nc = new NetcatServer()
+const nc = new NetcatServer()
 nc.udp().port(2100).listen().on('data', function (rinfo, data) {
   console.log('Got', data.toString(), 'from', rinfo.address, rinfo.port)
   nc.close()
@@ -185,7 +185,7 @@ nc.udp().port(2100).listen().on('data', function (rinfo, data) {
 #### UDP send a packet
 
 ```javascript
-var nc2 = new NetcatClient()
+const nc2 = new NetcatClient()
 nc2.udp().port(2100).wait(1000).init().send('hello', '127.0.0.1')
 ```
 
