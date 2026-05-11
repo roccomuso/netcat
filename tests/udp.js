@@ -184,7 +184,7 @@ test('Transfer a file (stream)', function (t) {
   t.timeoutAfter(5000)
 
   var nc = new NetcatServer()
-  var testFile = path.join(__dirname, 'udp.js')
+  var testFile = path.join(__dirname, '..', 'client.js')
   var inputFile = fs.readFileSync(testFile)
 
   var concatStream = concat(function (file) {
@@ -199,8 +199,10 @@ test('Transfer a file (stream)', function (t) {
     })
 
   var nc2 = new NetcatClient()
-  nc2.udp().destination('127.0.0.1').port(2105).init()
-  fs.createReadStream(testFile).pipe(nc2.stream())
+  nc.on('ready', function () {
+    nc2.udp().destination('127.0.0.1').port(2105).init()
+    fs.createReadStream(testFile).pipe(nc2.stream())
+  })
 })
 
 test('Server: listen and sending on different ports', function (t) {
@@ -331,6 +333,9 @@ test('Server: traffic pipe filter()', function (t) {
   nc.udp().port(2099).filter(toUpperCase).wait(1000).pipe(srvGotData).listen()
 
   var nc2 = new NetcatClient()
+  nc.on('close', function () {
+    nc2.close()
+  })
   nc2.udp().port(2099).init().wait(500).send('client data')
 })
 

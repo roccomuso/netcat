@@ -24,10 +24,13 @@ test('Client and Server constructor', function (t) {
 })
 
 test('Server basic methods', function (t) {
-  t.plan(16)
+  t.plan(17)
 
   try {
     var nc = new NetcatServer()
+    var ncVerbose = new NetcatServer({ verbose: true })
+    var ncQuiet = new NetcatServer()
+    t.notEqual(ncVerbose.debug, ncQuiet.debug, 'verbose debug does not leak to other server instances')
     /* checking default values */
     t.equal(nc._port, null, 'port null by default')
     t.equal(nc._protocol, 'tcp', 'protocol is tcp by default')
@@ -66,12 +69,15 @@ test('Server basic methods', function (t) {
 })
 
 test('Client basic methods', function (t) {
-  t.plan(16)
+  t.plan(18)
   t.timeoutAfter(5000)
 
   try {
     var srv = new NetcatServer().port(2390).listen() // server
     var nc = new NetcatClient()
+    var ncVerbose = new NetcatClient({ verbose: true })
+    var ncQuiet = new NetcatClient()
+    t.notEqual(ncVerbose.debug, ncQuiet.debug, 'verbose debug does not leak to other client instances')
     /* checking default values */
     t.equal(nc._port, null, 'port null by default')
     t.equal(nc._protocol, 'tcp', 'protocol is tcp by default')
@@ -94,6 +100,9 @@ test('Client basic methods', function (t) {
     nc.exec('/bin/sh')
     t.equal(nc._exec, '/bin/sh', 'setting exec to /bin/sh')
     nc.exec(null)
+    t.doesNotThrow(function () {
+      new NetcatClient().close()
+    }, 'closing before connect is safe')
 
     nc.connect(function () {
       t.ok(nc.client, 'client connected')
