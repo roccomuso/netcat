@@ -4,6 +4,7 @@ const test = require('tape')
 const fs = require('fs')
 const os = require('os')
 const path = require('path')
+const stream = require('stream')
 const concat = require('concat-stream')
 const through2 = require('through2')
 const Netcat = require('../')
@@ -490,6 +491,31 @@ test('Server exec()', function (t) {
   })
 })
 
+test('Server exec() with an already-ended served stream', function (t) {
+  // regression test: nc CLI always calls .serve(process.stdin); in a
+  // non-interactive context stdin ends immediately, which used to end the
+  // socket before the exec'd child's output could be written to it
+  t.plan(1)
+  t.timeoutAfter(5000)
+
+  const cmd = (os.platform() === 'win32') ? 'echo.exe' : 'echo'
+  const args = (os.platform() === 'win32') ? [] : ['hello from exec']
+  const opts = (os.platform() === 'win32') ? { cwd: __dirname } : {}
+
+  const emptyStream = new stream.PassThrough()
+  emptyStream.end() // simulate a closed/non-interactive stdin
+
+  const nc = new NetcatServer()
+  nc.port(2402).listen().serve(emptyStream).exec(cmd, args, opts)
+
+  const nc2 = new NetcatClient()
+  nc2.port(2402).connect().on('data', function (buf) {
+    t.equal(buf.toString().trim(), 'hello from exec', 'got exec output despite the served stream ending immediately')
+    nc2.close()
+    nc.close()
+  })
+})
+
 test('Client exec()', function (t) {
   t.plan(5)
   t.timeoutAfter(5000)
@@ -647,5 +673,26 @@ test('Port scan', function (t) {
     nc.close()
     nc2.close()
     nc3.close()
+  })
+})
+
+test('Port scan: closed ports followed by an open one', function (t) {
+  // regression test: closed-port scans used to leave a dangling 'connect'
+  // listener on the shared client, which a later successful connect would
+  // spuriously re-trigger, mislabeling earlier closed ports as 'open'
+  t.plan(2)
+  t.timeoutAfter(5000)
+
+  const nc = new NetcatServer().port(3106).listen()
+
+  const client = new NetcatClient()
+  client.tcp().addr('127.0.0.1').scan('3101-3106', function (ports) {
+    t.deepEqual(
+      ports,
+      { 3101: 'closed', 3102: 'closed', 3103: 'closed', 3104: 'closed', 3105: 'closed', 3106: 'open' },
+      'each port reported independently, with no leaked "open" results'
+    )
+    t.equal(Object.keys(ports).indexOf('undefined'), -1, 'no undefined key from a missing err.port')
+    nc.close()
   })
 })
