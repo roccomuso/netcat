@@ -35,7 +35,7 @@
   },
   "homepage": "https://github.com/roccomuso/netcat#readme",
   "resolutions": {
-    "brace-expansion": "^1.1.18"
+    "brace-expansion": "^1.1.21"
   },
   "devDependencies": {
     "concat-stream": "^1.6.2",
