@@ -3,7 +3,7 @@
   "version": "1.5.2",
   "description": "Netcat client and server modules written in pure Javascript for Node.js",
   "main": "index.js",
-  "packageManager": "yarn@1.22.22",
+  "packageManager": "yarn@4.18.1",
   "scripts": {
     "test": "standard && tape ./tests/**/*.js | tap-spec",
     "tcp": "tape ./tests/tcp.js | tap-spec",
