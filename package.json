@@ -3,11 +3,18 @@
   "version": "1.5.2",
   "description": "Netcat client and server modules written in pure Javascript for Node.js",
   "main": "index.js",
+  "files": [
+    "index.js",
+    "client.js",
+    "server.js",
+    "lib/"
+  ],
   "packageManager": "yarn@4.18.1",
   "scripts": {
-    "test": "standard && tape ./tests/**/*.js | tap-spec",
+    "test": "eslint . && tape \"./tests/**/*.js\" | tap-spec",
     "tcp": "tape ./tests/tcp.js | tap-spec",
-    "udp": "tape ./tests/udp.js | tap-spec"
+    "udp": "tape ./tests/udp.js | tap-spec",
+    "lint": "eslint ."
   },
   "repository": {
     "type": "git",
@@ -34,21 +41,16 @@
     "url": "https://github.com/roccomuso/netcat/issues"
   },
   "homepage": "https://github.com/roccomuso/netcat#readme",
-  "resolutions": {
-    "brace-expansion": "^1.1.18"
-  },
   "devDependencies": {
-    "concat-stream": "^1.6.2",
-    "standard": "^12.0.1",
+    "eslint": "^10.14.0",
+    "neostandard": "^0.14.1",
     "tap-spec": "^5.0.0",
     "tape": "^4.9.0"
   },
   "dependencies": {
-    "async-each-series": "^1.1.0",
     "datagram-stream": "^1.1.1",
     "debug": "^4.0.1",
     "hexer": "^1.5.0",
-    "nanoid": "^3.3.18",
-    "through2": "^3.0.0"
+    "nanoid": "^3.3.18"
   }
 }
