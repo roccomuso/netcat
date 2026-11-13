@@ -696,3 +696,22 @@ test('Port scan: closed ports followed by an open one', function (t) {
     nc.close()
   })
 })
+
+test('Client receives a large payload through data events only', function (t) {
+  // regression test for issue #11: without pipe(), the internal filter was
+  // never drained, backpressure paused the socket and 'data' stopped at ~128KB
+  t.plan(1)
+  t.timeoutAfter(5000)
+
+  const total = 5 * 1024 * 1024
+  const nc = new NetcatServer().port(3201).listen().serve(Buffer.alloc(total, 97))
+
+  let received = 0
+  const client = new NetcatClient()
+  client.addr('127.0.0.1').port(3201).connect()
+    .on('data', function (chunk) { received += chunk.length })
+    .on('close', function () {
+      t.equal(received, total, 'received the whole payload')
+      nc.close()
+    })
+})
