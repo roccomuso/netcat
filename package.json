@@ -11,9 +11,9 @@
   ],
   "packageManager": "yarn@4.18.1",
   "scripts": {
-    "test": "eslint . && tape \"./tests/**/*.js\" | tap-spec",
-    "tcp": "tape ./tests/tcp.js | tap-spec",
-    "udp": "tape ./tests/udp.js | tap-spec",
+    "test": "eslint . && node --test",
+    "tcp": "node --test tests/tcp.test.js",
+    "udp": "node --test tests/udp.test.js",
     "lint": "eslint ."
   },
   "repository": {
@@ -43,14 +43,11 @@
   "homepage": "https://github.com/roccomuso/netcat#readme",
   "devDependencies": {
     "eslint": "^10.14.0",
-    "neostandard": "^0.14.1",
-    "tap-spec": "^5.0.0",
-    "tape": "^4.9.0"
+    "neostandard": "^0.14.1"
   },
   "dependencies": {
     "datagram-stream": "^1.1.1",
     "debug": "^4.0.1",
-    "hexer": "^1.5.0",
-    "nanoid": "^3.3.18"
+    "hexer": "^1.5.0"
   }
 }
