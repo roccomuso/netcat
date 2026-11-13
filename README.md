@@ -2,17 +2,13 @@
 
 [![NPM Version](https://img.shields.io/npm/v/netcat.svg)](https://www.npmjs.com/package/netcat)
 ![node](https://img.shields.io/node/v/netcat.svg)
-[![Dependency Status](https://david-dm.org/roccomuso/netcat.png)](https://david-dm.org/roccomuso/netcat)
-[![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+[![CI](https://github.com/roccomuso/netcat/actions/workflows/ci.yml/badge.svg)](https://github.com/roccomuso/netcat/actions/workflows/ci.yml)
+[![JavaScript Style Guide](https://img.shields.io/badge/code_style-neostandard-brightgreen.svg)](https://github.com/neostandard/neostandard)
 <span class="badge-patreon"><a href="https://patreon.com/roccomuso" title="Donate to this project using Patreon"><img src="https://img.shields.io/badge/patreon-donate-yellow.svg" alt="Patreon donate button" /></a></span>
 
 > Netcat client and server modules written in pure JavaScript for Node.js.
 
-Fully tested modules that implement the basic netcat features. To use this as a standalone tool, install the [nc](https://github.com/roccomuso/nc) package.
-
-| Linux/Mac | Windows |
-|-----------|---------|
-| [![Build Status](https://travis-ci.org/roccomuso/netcat.svg?branch=master)](https://travis-ci.org/roccomuso/netcat) | [![Build status](https://ci.appveyor.com/api/projects/status/q4x7xwtj7ga3ppo5?svg=true)](https://ci.appveyor.com/project/roccomuso/netcat) |
+Fully tested modules that implement the basic netcat features, on Linux, macOS and Windows. To use this as a standalone tool, install the [nc](https://github.com/roccomuso/nc) package.
 
 ## What you can do :computer:
 
@@ -35,6 +31,8 @@ Fully tested modules that implement the basic netcat features. To use this as a 
 ## Install
 
     $ yarn add netcat
+
+Requires Node.js 22 or later.
 
 [![NPM](https://nodei.co/npm/netcat.png?downloads=true&downloadRank=true)](https://nodei.co/npm/netcat/)
 
@@ -144,7 +142,7 @@ nc.addr('127.0.0.1').scan('22-80', function (ports) {
 })
 ```
 
-The port scanner is TCP-only. UDP scanning is not [very effective](https://en.wikipedia.org/wiki/Port_scanner#UDP_scanning). `scan(...)` also accepts an array or an integer.
+The port scanner is TCP-only. UDP scanning is not [very effective](https://en.wikipedia.org/wiki/Port_scanner#UDP_scanning). `scan(...)` also accepts an array or an integer. Use `interval(ms)` to wait between ports.
 
 #### Filter incoming data
 
@@ -217,17 +215,16 @@ Client-side only. Let the client connect to the previously set address and port.
 #### `retry(ms)` - TCP only
 
 Client-side only. Retry connection every `ms` milliseconds when connection is lost.
+While retrying, failed connection attempts don't emit `error`: the client just keeps trying.
 
 #### `interval(ms)` or `i(ms)`
 
-Client-side only. Specify a delay, in milliseconds, for sent data.
+Client-side only. Specify a delay, in milliseconds, for sent data and between the ports scanned by `scan()`.
 
 #### `waitTime(ms)` or `wait(ms)`
 
-Set a timeout.
-
-- A server will wait `ms` milliseconds from the first data event and close the connection if it does not receive more data.
-- A client will wait `ms` milliseconds from the first sent data and close if there is no more data to send.
+Set an inactivity timeout: the server or client closes, emitting `waitTimeout`, when no data is sent or received for `ms` milliseconds.
+The timer starts with the first data sent or received, and any traffic in either direction resets it.
 
 #### `stream()`
 
@@ -241,9 +238,7 @@ Pipe incoming data from the client to the given `outStream`.
 
 Filter incoming data with the given transform function, `function (chunk, enc, cb) { ... }`, before it is piped out.
 
-**Note**: The `.on('data', cb)` data you get is not filtered. The filter only applies on the piped `.pipe(...)` stream.
-
-**Known issue**: `through2` currently [doesn't respect](https://github.com/roccomuso/netcat/issues/4) the encoding. If you set a filter, you will get a Buffer and the `enc()` method will not be useful.
+**Note**: The `.on('data', cb)` data you get is [not filtered](https://github.com/roccomuso/netcat/issues/4). The filter only applies on the piped `.pipe(...)` stream.
 
 #### `serve()`
 
@@ -251,6 +246,7 @@ Server-side method.
 
 The `serve` method accepts a string (indicating a file name, make sure the file exists), a readable stream, or a Buffer.
 When you pass a readable stream with TCP keepalive enabled, the stream's data is cached as it is read so later clients can receive the same data.
+The cache is limited to 1 MiB (configurable with the `serveCacheLimit` constructor option, e.g. `new NetcatServer({ serveCacheLimit: 10 * 1024 * 1024 })`): once a stream exceeds it, for example an endless one like `process.stdin`, the cache is dropped and clients connecting later only receive the data still to come.
 
 When serving a file or a Buffer to a socket, the pipe will emit an `end` (EOF) event to the socket and close the stream.
 
@@ -276,7 +272,8 @@ Close the connection, or all connections when called server-side, and call `cb` 
 
 #### `enc()`
 
-Set an encoding. The most common ones are: `utf8`, `ascii`, `base64`, `hex`, and `binary`.
+Set the encoding of the `data` events. The most common ones are: `utf8`, `ascii`, `base64`, `hex`, and `binary`.
+Data given to `pipe(outStream)` is always a Buffer.
 
 #### `protocol(prot)`
 
@@ -317,6 +314,8 @@ Write a hex dump of incoming or outgoing traffic to the given writable stream, `
 A row represents a chunk of at least 16 bytes by default.
 
 The first character can be either `<` or `>`, meaning "incoming chunk" or "outgoing chunk", respectively.
+
+`outStream` is ended when the client or server closes (except `process.stdout` and `process.stderr`, which are never ended).
 
 #### `scan(portsInterval, cb)` - TCP only
 
@@ -388,23 +387,23 @@ Emitted when a new client connects to the server.
 
 Emitted when a client ends the connection.
 
-- `.on('timeout', function (socket) {})` - **TCP only**
-
-Socket timeout event.
-
 - `.on('waitTimeout', cb)`
 
 Fired when the server remains inactive for a specified `wait(ms)` time.
 
+- `.on('clientError', function (socket, err) {})` - **TCP only**
+
+Emitted on a client socket error (e.g. a connection reset). The server keeps running.
+
 - `.on('error', function (err) {})`
 
-Emitted on error.
+Emitted on server errors, e.g. when the port is already in use, or when the `exec()` command fails to start.
 
 ### Client events
 
 - `.on('data', function (msg) {})`
 
-Emitted when data is received from the server.
+Emitted when data is received from the server. In UDP, `msg` is `{ data, rinfo }`.
 
 - `.on('close', cb)`
 
@@ -420,7 +419,7 @@ Emitted when the client establishes a connection with a server.
 
 - `.on('error', function (err) {})`
 
-Emitted on error.
+Emitted on error, e.g. when the connection is refused (not while retrying, see `retry()`).
 
 ## CLI usage
 
