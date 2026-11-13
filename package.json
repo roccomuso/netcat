@@ -11,9 +11,9 @@
   ],
   "packageManager": "yarn@4.18.1",
   "scripts": {
-    "test": "eslint . && node --test",
-    "tcp": "node --test tests/tcp.test.js",
-    "udp": "node --test tests/udp.test.js",
+    "test": "eslint . && node --test --test-force-exit",
+    "tcp": "node --test --test-force-exit tests/tcp.test.js",
+    "udp": "node --test --test-force-exit tests/udp.test.js",
     "lint": "eslint ."
   },
   "repository": {
